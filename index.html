@@ -7,32 +7,38 @@
   <title>FelixCraft | Minecraft Roleplay Server</title>
   <link rel="icon" href="https://iili.io/3kG3CMv.png">
   <meta name="description" content="FelixCraft โรลเพลไมน์คราฟต์ เซิร์ฟเวอร์น่ารักสำหรับ Bedrock และ Java Edition">
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary-blue: #87CEEB;
-      --light-blue: #E0F7FF;
-      --dark-blue: #5D7D9A;
+      --primary-blue: #93C5FD;
+      --secondary-blue: #60A5FA;
+      --light-blue: #F8FAFC;
+      --accent-blue: #3B82F6;
+      --text-dark: #475569;
+      --text-light: #94A3B8;
       --white: #FFFFFF;
-      --black: #1A1A1A;
-      --card-bg: rgba(255, 255, 255, 0.9);
-      --gradient: linear-gradient(135deg, var(--primary-blue) 0%, #A7D8F9 100%);
-      --shadow: 0 10px 30px rgba(135, 206, 235, 0.2);
-      --shadow-hover: 0 15px 40px rgba(135, 206, 235, 0.3);
-      --border-radius: 20px;
-      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --glass-bg: rgba(248, 250, 252, 0.8);
+      --glass-border: rgba(203, 213, 225, 0.3);
+      --gradient: linear-gradient(135deg, #93C5FD 0%, #60A5FA 50%, #3B82F6 100%);
+      --shadow: 0 8px 32px rgba(148, 163, 184, 0.15);
+      --shadow-hover: 0 12px 48px rgba(148, 163, 184, 0.25);
+      --border-radius: 24px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     [data-theme="dark"] {
-      --primary-blue: #5DADE2;
-      --light-blue: #2C3E50;
-      --dark-blue: #ECF0F1;
-      --white: #2C3E50;
-      --black: #ECF0F1;
-      --card-bg: rgba(44, 62, 80, 0.9);
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.4);
+      --primary-blue: #7DD3FC;
+      --secondary-blue: #38BDF8;
+      --light-blue: #0F172A;
+      --accent-blue: #0EA5E9;
+      --text-dark: #F1F5F9;
+      --text-light: #94A3B8;
+      --white: #1E293B;
+      --glass-bg: rgba(30, 41, 59, 0.7);
+      --glass-border: rgba(125, 211, 252, 0.1);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --shadow-hover: 0 12px 48px rgba(0, 0, 0, 0.6);
     }
 
     * {
@@ -41,12 +47,493 @@
       padding: 0;
     }
 
+    *::selection {
+      background: var(--primary-blue);
+      color: white;
+    }
+
+    /* Loading Screen */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    [data-theme="dark"] .loading-screen {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loading-icon {
+      font-size: 80px;
+      color: var(--accent-blue);
+      margin-bottom: 25px;
+      animation: coffeeFloat 1.5s ease-in-out infinite;
+      filter: drop-shadow(0 10px 30px rgba(96, 165, 250, 0.4));
+    }
+
+    .loading-text {
+      font-size: 1.1rem;
+      color: var(--primary-blue);
+      font-weight: 500;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes coffeeFloat {
+
+      0%,
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+
+      25% {
+        transform: translateY(-15px) rotate(-5deg);
+      }
+
+      50% {
+        transform: translateY(-20px) rotate(0deg);
+      }
+
+      75% {
+        transform: translateY(-15px) rotate(5deg);
+      }
+    }
+
+    /* Advertisement Modal */
+    .ad-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .ad-modal.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .ad-modal-content {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius);
+      padding: 0;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: var(--shadow);
+      position: relative;
+      transform: scale(0.7) translateY(-50px);
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      overflow: hidden;
+    }
+
+    .ad-modal.show .ad-modal-content {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+
+    .ad-modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: white;
+      transition: var(--transition);
+      z-index: 10;
+    }
+
+    .ad-modal-close:hover {
+      background: var(--gradient);
+      transform: rotate(90deg);
+      border-color: transparent;
+    }
+
+    .ad-image-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+    }
+
+    .ad-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+    }
+
+    .ad-content {
+      padding: 25px;
+      text-align: center;
+    }
+
+    .ad-text {
+      color: var(--text-light);
+      font-size: 1rem;
+      margin-bottom: 10px;
+      font-weight: 400;
+    }
+
+    .ad-website {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .ad-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .ad-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--gradient);
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      font-family: 'Mitr', sans-serif;
+    }
+
+    .ad-button:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .ad-button.secondary {
+      background: var(--glass-bg);
+      color: var(--text-dark);
+      border: 2px solid var(--glass-border);
+    }
+
+    .ad-button.secondary:hover {
+      background: var(--glass-bg);
+      border-color: var(--primary-blue);
+      color: var(--primary-blue);
+    }
+
+    @media (max-width: 768px) {
+      .ad-modal-content {
+        width: 95%;
+        max-width: none;
+      }
+
+      .ad-image-container {
+        padding: 10px;
+      }
+
+      .ad-content {
+        padding: 20px;
+      }
+
+      .ad-text {
+        font-size: 0.9rem;
+      }
+
+      .ad-website {
+        font-size: 1.3rem;
+      }
+
+      .ad-buttons {
+        flex-direction: column;
+      }
+
+      .ad-button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* Tablet optimizations */
+    @media (max-width: 1024px) and (min-width: 769px) {
+      .navbar {
+        padding: 12px 16px;
+        gap: 12px;
+        top: 16px;
+      }
+
+      /* Hide navbar social icons on tablet to prevent overflow */
+      .navbar .social-icons {
+        display: none;
+      }
+
+      .navbar img {
+        width: 36px;
+        height: 36px;
+      }
+
+      .navbar a {
+        width: 42px;
+        height: 42px;
+        font-size: 1.05rem;
+      }
+
+      .theme-toggle {
+        width: 42px;
+        height: 42px;
+      }
+
+      .theme-toggle i {
+        font-size: 1.05rem;
+      }
+
+      .container {
+        padding: 80px 24px;
+      }
+
+      .hero {
+        padding: 100px 6% 70px;
+        background-attachment: scroll;
+        min-height: 92vh;
+      }
+
+      h2 {
+        font-size: 2.2rem;
+        margin-bottom: 44px;
+      }
+
+      .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 24px;
+      }
+
+      .team-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 22px;
+      }
+
+      .gallery-item {
+        width: 300px;
+        height: 200px;
+      }
+
+      .gallery-container {
+        padding: 16px 0;
+      }
+
+      .partners-container {
+        height: 140px;
+      }
+
+      .partner-item {
+        width: 180px;
+        margin: 0 16px;
+      }
+    }
+
+    /* Mobile-specific overflow guard */
+    @media (max-width: 768px) {
+      .navbar .social-icons { display: none; }
+      .nav-links { gap: 6px; }
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .welcome-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9998;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    [data-theme="dark"] .welcome-screen {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+    }
+
+    .welcome-screen.show {
+      opacity: 1;
+      z-index: 10000;
+    }
+
+    .welcome-screen.fade-out {
+      opacity: 0;
+    }
+
+    .welcome-content {
+      text-align: center;
+      animation: welcomeZoom 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .welcome-logo {
+      width: auto;
+      height: 150px;
+      max-width: 300px;
+      margin-bottom: 30px;
+      animation: logoReveal 1.2s ease-out;
+      filter: drop-shadow(0 10px 40px rgba(125, 211, 252, 0.5));
+      object-fit: contain;
+    }
+
+    .welcome-title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titleSlide 1s ease-out 0.3s both;
+    }
+
+    .welcome-subtitle {
+      font-size: 1.3rem;
+      color: var(--text-light);
+      font-weight: 400;
+      animation: subtitleSlide 1s ease-out 0.6s both;
+    }
+
+    @keyframes welcomeZoom {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes logoReveal {
+      0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+      }
+      60% {
+        transform: scale(1.2) rotate(20deg);
+      }
+      100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
+    }
+
+    @keyframes titleSlide {
+      0% {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes subtitleSlide {
+      0% {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .welcome-logo {
+        height: 120px;
+        max-width: 250px;
+      }
+
+      .welcome-title {
+        font-size: 2rem;
+      }
+
+      .welcome-subtitle {
+        font-size: 1rem;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--light-blue);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--gradient);
+      border-radius: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--secondary-blue);
+    }
+
     body,
     html {
       height: 100%;
-      background-color: var(--light-blue);
-      color: var(--black);
-      font-family: 'Kanit', sans-serif;
+      background: var(--light-blue);
+      color: var(--text-dark);
+      font-family: 'Mitr', sans-serif;
       scroll-behavior: smooth;
       overflow-x: hidden;
       transition: var(--transition);
@@ -70,167 +557,336 @@
     }
 
     .floating-item:nth-child(1) {
-      width: 300px;
-      height: 300px;
-      background: var(--primary-blue);
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(135deg, rgba(147, 197, 253, 0.3), rgba(96, 165, 250, 0.3));
       top: 10%;
       left: 5%;
       animation-delay: 0s;
+      filter: blur(80px);
     }
 
     .floating-item:nth-child(2) {
-      width: 200px;
-      height: 200px;
-      background: var(--primary-blue);
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.3), rgba(59, 130, 246, 0.3));
       top: 20%;
       right: 10%;
       animation-delay: 5s;
+      filter: blur(80px);
     }
 
     .floating-item:nth-child(3) {
-      width: 250px;
-      height: 250px;
-      background: var(--primary-blue);
+      width: 350px;
+      height: 350px;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(147, 197, 253, 0.3));
       bottom: 30%;
       left: 15%;
       animation-delay: 10s;
+      filter: blur(80px);
     }
 
     .floating-item:nth-child(4) {
-      width: 150px;
-      height: 150px;
-      background: var(--primary-blue);
+      width: 250px;
+      height: 250px;
+      background: linear-gradient(135deg, rgba(147, 197, 253, 0.3), rgba(59, 130, 246, 0.3));
       bottom: 20%;
       right: 5%;
       animation-delay: 15s;
+      filter: blur(80px);
     }
 
     .theme-toggle {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 1001;
-      width: 50px;
-      height: 50px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      background: var(--card-bg);
+      background: var(--white);
+      border: 2px solid var(--glass-border);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: var(--transition);
       box-shadow: var(--shadow);
-      border: 2px solid var(--primary-blue);
     }
 
     .theme-toggle:hover {
-      transform: rotate(15deg) scale(1.1);
+      transform: scale(1.1);
       box-shadow: var(--shadow-hover);
+      background: var(--gradient);
+      border-color: transparent;
+    }
+
+    .theme-toggle:hover i {
+      color: white;
     }
 
     .theme-toggle i {
-      font-size: 1.2rem;
+      font-size: 1rem;
       color: var(--primary-blue);
       transition: var(--transition);
     }
 
     .navbar {
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(10px);
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
       display: flex;
       align-items: center;
-      padding: 15px 5%;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      gap: 14px;
+      padding: 10px 20px;
       position: fixed;
-      width: 100%;
-      top: 0;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 1000;
+      transition: transform 0.3s ease, top 0.3s ease;
+      box-shadow: var(--shadow-hover);
+      border-radius: 50px;
+      max-width: 95%;
+      width: auto;
+    }
+
+    .navbar.hidden {
+      transform: translateX(-50%) translateY(-150%);
+    }
+
+    .navbar-toggle-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--gradient);
+      border: none;
+      color: white;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 999;
+      box-shadow: var(--shadow-hover);
       transition: var(--transition);
-      border-bottom: 1px solid rgba(135, 206, 235, 0.2);
+      font-size: 1.3rem;
     }
 
-    [data-theme="dark"] .navbar {
-      background: rgba(44, 62, 80, 0.8);
-      border-bottom: 1px solid rgba(93, 173, 226, 0.2);
+    .navbar-toggle-btn:hover {
+      transform: scale(1.1) rotate(90deg);
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.5);
     }
 
-    .navbar.scrolled {
-      padding: 10px 5%;
-      box-shadow: var(--shadow);
+    .navbar.hidden ~ .navbar-toggle-btn {
+      display: flex;
+    }
+
+    .navbar > div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .navbar-logo {
+      display: flex;
+      align-items: center;
+      padding-right: 15px;
+      border-right: 1px solid var(--glass-border);
+    }
+
+    .navbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-left: 15px;
+      border-left: 1px solid var(--glass-border);
     }
 
     .navbar img {
-      height: 45px;
-      margin-right: 20px;
+      width: 32px;
+      height: 32px;
       transition: var(--transition);
+      filter: drop-shadow(0 4px 12px rgba(125, 211, 252, 0.3));
+      border-radius: 50%;
     }
 
     .navbar img:hover {
-      transform: scale(1.1);
+      transform: scale(1.1) rotate(-5deg);
+      filter: drop-shadow(0 6px 16px rgba(125, 211, 252, 0.5));
     }
 
     .nav-links {
       display: flex;
-      flex-grow: 1;
-      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -ms-overflow-style: none; /* IE/Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+
+    .nav-links::-webkit-scrollbar { display: none; }
+
+    .nav-arrow {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-blue);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .nav-arrow:hover {
+      background: var(--gradient);
+      color: white;
+      border-color: transparent;
+      transform: scale(1.08);
     }
 
     .navbar a {
-      color: var(--black);
-      padding: 10px 15px;
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      background: var(--white);
+      border: 2px solid var(--glass-border);
+      color: var(--text-dark);
       text-decoration: none;
-      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: relative;
       transition: var(--transition);
       font-size: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--shadow);
     }
 
-    .navbar a::after {
-      content: '';
+    .navbar a[data-tooltip]::before {
+      content: attr(data-tooltip);
       position: absolute;
-      bottom: 0;
-      left: 50%;
-      width: 0;
-      height: 2px;
-      background: var(--primary-blue);
+      right: 58px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      color: var(--text-dark);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(10px);
       transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+
+    /* Support title-based tooltips (e.g., for social icons) */
+    .navbar a[title]::before {
+      content: attr(title);
+      position: absolute;
+      right: 58px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      color: var(--text-dark);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(10px);
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+
+    /* Ensure navbar social icons are horizontal and compact */
+    .navbar .social-icons {
+      flex-direction: row;
+      gap: 8px;
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+      width: auto;
+      align-items: center;
     }
 
     .navbar a:hover {
-      color: var(--primary-blue);
+      background: var(--gradient);
+      color: white;
+      border-color: transparent;
+      transform: scale(1.1);
+      box-shadow: var(--shadow-hover);
     }
 
-    .navbar a:hover::after {
-      width: 100%;
-      left: 0;
+    .navbar a[data-tooltip]:hover::before,
+    .navbar a[title]:hover::before {
+      opacity: 1;
+      transform: translateX(0);
     }
 
     .social-icons {
       display: flex;
-      gap: 15px;
-      margin-left: 20px;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+      padding-top: 15px;
+      border-top: 1px solid var(--glass-border);
+      width: 100%;
+      align-items: center;
+    }
+
+    /* Footer social icons should be horizontal */
+    footer .social-icons {
+      flex-direction: row;
+      gap: 12px;
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+      width: auto;
     }
 
     .social-icon {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      background: var(--gradient);
-      color: white;
+      background: var(--white);
+      border: 2px solid var(--glass-border);
+      color: var(--primary-blue);
       display: flex;
       align-items: center;
       justify-content: center;
       transition: var(--transition);
       box-shadow: var(--shadow);
+      font-size: 1rem;
     }
 
     .social-icon:hover {
-      transform: translateY(-5px);
+      transform: scale(1.15);
       box-shadow: var(--shadow-hover);
+      background: var(--gradient);
+      color: white;
+      border-color: transparent;
     }
 
     .hero {
       background:
-        linear-gradient(rgba(224, 247, 255, 0.75), rgba(224, 247, 255, 0.75)),
+        linear-gradient(rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.9)),
         url('https://iili.io/KTMu5Cv.png');
       background-size: cover;
       background-position: center;
@@ -239,14 +895,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 100px 5% 80px;
+      padding: 120px 5% 80px;
       position: relative;
       overflow: hidden;
     }
 
     [data-theme="dark"] .hero {
       background:
-        linear-gradient(rgba(44, 62, 80, 0.75), rgba(44, 62, 80, 0.75)),
+        linear-gradient(rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.85)),
         url('https://iili.io/KTMu5Cv.png');
       background-size: cover;
       background-position: center;
@@ -261,10 +917,11 @@
       right: 0;
       bottom: 0;
       background:
-        radial-gradient(circle at 20% 80%, rgba(135, 206, 235, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(135, 206, 235, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(135, 206, 235, 0.2) 0%, transparent 50%);
+        radial-gradient(circle at 20% 80%, rgba(147, 197, 253, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(96, 165, 250, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.15) 0%, transparent 50%);
       z-index: 0;
+      animation: pulse 8s ease-in-out infinite;
     }
 
     .hero-particles {
@@ -279,23 +936,26 @@
 
     .particle {
       position: absolute;
-      width: 4px;
-      height: 4px;
-      background: rgba(135, 206, 235, 0.6);
+      width: 5px;
+      height: 5px;
+      background: rgba(147, 197, 253, 0.6);
       border-radius: 50%;
       animation: particleFloat 15s infinite linear;
+      box-shadow: 0 0 10px rgba(147, 197, 253, 0.4);
     }
 
     .particle:nth-child(odd) {
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(203, 213, 225, 0.8);
       animation-duration: 20s;
+      box-shadow: 0 0 15px rgba(203, 213, 225, 0.5);
     }
 
     .particle:nth-child(3n) {
-      width: 6px;
-      height: 6px;
-      background: rgba(135, 206, 235, 0.4);
+      width: 7px;
+      height: 7px;
+      background: rgba(96, 165, 250, 0.5);
       animation-duration: 25s;
+      box-shadow: 0 0 12px rgba(96, 165, 250, 0.4);
     }
 
     .hero-content {
@@ -308,17 +968,21 @@
     .hero-content h1 {
       font-size: clamp(2.5rem, 6vw, 4.5rem);
       font-weight: 700;
-      margin-bottom: 20px;
-      color: var(--primary-blue);
+      margin-bottom: 24px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       animation: fadeInUp 1s ease;
+      text-shadow: 0 4px 20px rgba(125, 211, 252, 0.3);
     }
 
     .subtitle {
-      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
       font-weight: 400;
-      margin-bottom: 30px;
-      color: var(--dark-blue);
-      line-height: 1.6;
+      margin-bottom: 32px;
+      color: var(--text-light);
+      line-height: 1.7;
       animation: fadeInUp 1s ease 0.2s both;
     }
 
@@ -326,21 +990,35 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 15px;
-      margin-top: 30px;
+      gap: 16px;
+      margin-top: 36px;
       animation: fadeInUp 1s ease 0.4s both;
+    }
+
+    .hero-content {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: var(--border-radius);
+      background: rgba(248, 250, 252, 0.4);
+      border: 1px solid rgba(203, 213, 225, 0.3);
+    }
+
+    [data-theme="dark"] .hero-content {
+      background: rgba(30, 41, 59, 0.3);
+      border: 1px solid rgba(125, 211, 252, 0.1);
     }
 
     .cta-btn {
       background: var(--gradient);
       color: white;
-      padding: 12px 24px;
+      padding: 14px 28px;
       border-radius: 50px;
       text-decoration: none;
       font-weight: 500;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       transition: var(--transition);
       box-shadow: var(--shadow);
       border: none;
@@ -356,8 +1034,8 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: 0.5s;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: 0.6s;
     }
 
     .cta-btn:hover::before {
@@ -365,35 +1043,58 @@
     }
 
     .cta-btn:hover {
-      transform: translateY(-5px);
+      transform: translateY(-4px) scale(1.02);
       box-shadow: var(--shadow-hover);
     }
 
+    .cta-btn:active {
+      transform: translateY(-2px) scale(0.98);
+    }
+
+    .cta-btn-secondary {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 2px solid var(--primary-blue);
+      color: var(--primary-blue);
+    }
+
+    .cta-btn-secondary:hover {
+      background: var(--gradient);
+      color: white;
+      border-color: transparent;
+    }
+
     .container {
-      max-width: 1200px;
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 80px 20px;
+      padding: 100px 24px;
     }
 
     .section {
-      margin-bottom: 80px;
+      margin-bottom: 100px;
       opacity: 0;
-      transform: translateY(30px);
-      transition: var(--transition);
+      transform: translateY(40px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
     }
 
     .section.visible {
       opacity: 1;
       transform: translateY(0);
+      animation: slideIn 0.6s ease;
     }
 
     h2 {
       font-size: 2.5rem;
       text-align: center;
       margin-bottom: 50px;
-      color: var(--primary-blue);
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       position: relative;
-      padding-bottom: 15px;
+      padding-bottom: 20px;
+      font-weight: 600;
     }
 
     h2::after {
@@ -402,25 +1103,28 @@
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 100px;
+      width: 80px;
       height: 4px;
       background: var(--gradient);
       border-radius: 2px;
     }
 
     .card {
-      background: var(--card-bg);
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
       border-radius: var(--border-radius);
-      padding: 30px;
+      padding: 32px;
       box-shadow: var(--shadow);
       transition: var(--transition);
       height: 100%;
-      border: 1px solid rgba(135, 206, 235, 0.2);
     }
 
     .card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-8px);
       box-shadow: var(--shadow-hover);
+      border-color: var(--primary-blue);
     }
 
     .gallery-container {
@@ -428,22 +1132,33 @@
       overflow: hidden;
       border-radius: var(--border-radius);
       margin-top: 40px;
+      padding: 20px 0;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
     }
 
     .gallery-track {
       display: flex;
-      transition: transform 0.5s ease;
+      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      padding: 0 20px;
+      will-change: transform;
     }
 
     .gallery-item {
       flex: 0 0 auto;
-      width: 300px;
-      margin-right: 20px;
+      width: 320px;
+      margin-right: 24px;
       border-radius: var(--border-radius);
       overflow: hidden;
       position: relative;
-      height: 200px;
+      height: 220px;
       box-shadow: var(--shadow);
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
     }
 
     .gallery-item img {
@@ -453,8 +1168,15 @@
       transition: var(--transition);
     }
 
+    .gallery-item:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-blue);
+    }
+
     .gallery-item:hover img {
-      transform: scale(1.05);
+      transform: scale(1.1);
+      filter: brightness(1.1);
     }
 
     .gallery-caption {
@@ -462,10 +1184,13 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(0, 0, 0, 0.7);
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       color: white;
-      padding: 10px;
+      padding: 16px;
       font-size: 0.9rem;
+      font-weight: 500;
       transform: translateY(100%);
       transition: var(--transition);
     }
@@ -474,77 +1199,509 @@
       transform: translateY(0);
     }
 
+    .gallery-item {
+      cursor: pointer;
+    }
+
+    .lang-switch {
+      display: flex;
+      gap: 4px;
+      background: var(--white);
+      padding: 3px;
+      border-radius: 12px;
+      border: 2px solid var(--glass-border);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .lang-btn {
+      padding: 5px 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-light);
+      font-weight: 600;
+      font-size: 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: 'Mitr', sans-serif;
+    }
+
+    .lang-btn.active {
+      background: var(--gradient);
+      color: white;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    }
+
+    .lang-btn:hover:not(.active) {
+      color: var(--primary-blue);
+      background: rgba(147, 197, 253, 0.1);
+    }
+
+    .image-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 3000;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .image-modal.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .image-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 30px;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      gap: 20px;
+    }
+
+    .image-modal-title {
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .image-modal-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 20px;
+      animation: zoomIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .image-modal-content img {
+      max-width: 90%;
+      max-height: calc(100vh - 250px);
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      transition: opacity 0.2s ease;
+    }
+
+    .image-counter {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      padding: 8px 20px;
+      border-radius: 50px;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: var(--shadow);
+    }
+
+    .image-thumbnails {
+      display: flex;
+      gap: 12px;
+      padding: 20px 30px;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      overflow-x: auto;
+      justify-content: center;
+    }
+
+    .image-thumbnails::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .image-thumbnails::-webkit-scrollbar-thumb {
+      background: var(--primary-blue);
+      border-radius: 3px;
+    }
+
+    .thumbnail-item {
+      flex-shrink: 0;
+      width: 100px;
+      height: 70px;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: var(--transition);
+      opacity: 0.6;
+    }
+
+    .thumbnail-item:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    .thumbnail-item.active {
+      border-color: var(--primary-blue);
+      opacity: 1;
+      box-shadow: 0 0 20px rgba(125, 211, 252, 0.5);
+    }
+
+    .thumbnail-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-modal-close {
+      padding: 10px 24px;
+      border-radius: 50px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: white;
+      transition: var(--transition);
+      font-family: 'Mitr', sans-serif;
+    }
+
+    .image-modal-close:hover {
+      background: var(--gradient);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .image-modal-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .image-modal-nav:hover {
+      background: var(--gradient);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .image-modal-nav.prev {
+      left: 20px;
+    }
+
+    .image-modal-nav.next {
+      right: 20px;
+    }
+
+    @keyframes zoomIn {
+      0% {
+        transform: scale(0.7) rotate(-5deg);
+        opacity: 0;
+      }
+
+      50% {
+        transform: scale(1.05) rotate(2deg);
+      }
+
+      100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
+    }
+
     .gallery-nav {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      background: var(--card-bg);
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: var(--transition);
       box-shadow: var(--shadow);
-      border: 1px solid var(--primary-blue);
       z-index: 10;
+      color: var(--primary-blue);
+      font-size: 1.2rem;
     }
 
     .gallery-nav:hover {
-      background: var(--primary-blue);
+      background: var(--gradient);
       color: white;
+      transform: translateY(-50%) scale(1.1);
+      border-color: transparent;
     }
 
     .gallery-nav.prev {
-      left: 10px;
+      left: 15px;
     }
 
     .gallery-nav.next {
-      right: 10px;
+      right: 15px;
     }
 
     .partners-section {
-      background: var(--card-bg);
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
       border-radius: var(--border-radius);
       padding: 50px;
       margin: 70px 0;
       box-shadow: var(--shadow);
-      border: 1px solid rgba(135, 206, 235, 0.2);
     }
 
     .partners-container {
       position: relative;
       overflow: hidden;
-      height: 150px;
+      height: 160px;
       margin-top: 40px;
+      mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
     }
 
     .partners-track {
       display: flex;
-      animation: scroll 30s linear infinite;
+      animation: smoothScroll 80s linear infinite;
       height: 100%;
+      will-change: transform;
+    }
+
+    .partners-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes smoothScroll {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
     }
 
     .partner-item {
       flex: 0 0 auto;
-      width: 200px;
+      width: 220px;
       margin: 0 20px;
-      background: var(--white);
-      padding: 15px;
-      border-radius: 15px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      padding: 25px;
+      border-radius: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       box-shadow: var(--shadow);
       transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .partner-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.2), transparent);
+      transition: 0.6s;
+    }
+
+    .partner-item:hover::before {
+      left: 100%;
     }
 
     .partner-item:hover {
-      transform: translateY(-5px);
+      transform: translateY(-10px) scale(1.08);
       box-shadow: var(--shadow-hover);
+      border-color: var(--primary-blue);
+    }
+
+    .partner-name {
+      margin-top: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      text-align: center;
+    }
+
+    .partner-description {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* Projects Section */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .project-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius);
+      padding: 0;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .project-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-blue);
+    }
+
+    .project-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .project-card:hover .project-image {
+      transform: scale(1.1);
+    }
+
+    .project-content {
+      padding: 25px;
+    }
+
+    .project-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .project-status {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .project-status.active {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+    }
+
+    .project-status.development {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white;
+    }
+
+    .project-status.coming-soon {
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+      color: white;
+    }
+
+    .project-description {
+      color: var(--text-light);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .project-tag {
+      padding: 5px 12px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 15px;
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    .project-links {
+      display: flex;
+      gap: 10px;
+    }
+
+    .project-link {
+      flex: 1;
+      padding: 10px 20px;
+      background: var(--gradient);
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 500;
+      text-align: center;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
+      font-family: 'Mitr', sans-serif;
+    }
+
+    .project-link:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .project-link.secondary {
+      background: var(--glass-bg);
+      color: var(--primary-blue);
+      border: 2px solid var(--primary-blue);
+    }
+
+    .project-link.secondary:hover {
+      background: var(--gradient);
+      color: white;
+      border-color: transparent;
     }
 
     .partner-logo {
@@ -554,18 +1711,19 @@
     }
 
     .partner-type {
-      font-size: 0.8rem;
-      color: var(--primary-blue);
+      font-size: 0.75rem;
+      color: white;
       font-weight: 600;
-      padding: 3px 10px;
+      padding: 6px 14px;
       border-radius: 20px;
-      background: rgba(135, 206, 235, 0.2);
+      background: var(--gradient);
+      box-shadow: 0 4px 12px rgba(125, 211, 252, 0.3);
     }
 
     .team-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 25px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 28px;
       margin-top: 40px;
     }
 
@@ -579,26 +1737,30 @@
       height: 120px;
       border-radius: 50%;
       object-fit: cover;
-      border: 3px solid var(--primary-blue);
-      margin-bottom: 15px;
+      border: 3px solid transparent;
+      background: var(--gradient);
+      padding: 3px;
+      margin-bottom: 16px;
       transition: var(--transition);
       box-shadow: var(--shadow);
     }
 
     .team-member:hover .team-avatar {
-      transform: scale(1.1);
+      transform: scale(1.1) rotate(5deg);
       box-shadow: var(--shadow-hover);
     }
 
     .team-member h4 {
       font-size: 1.3rem;
-      margin-bottom: 5px;
-      color: var(--black);
+      margin-bottom: 8px;
+      color: var(--text-dark);
+      font-weight: 600;
     }
 
     .team-member p {
-      color: var(--dark-blue);
-      margin-bottom: 10px;
+      color: var(--text-light);
+      margin-bottom: 12px;
+      font-size: 0.95rem;
     }
 
     .modal {
@@ -622,42 +1784,59 @@
     }
 
     .modal-content {
-      background: var(--card-bg);
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
       border-radius: var(--border-radius);
-      padding: 30px;
+      padding: 36px;
       max-width: 500px;
       width: 90%;
       box-shadow: var(--shadow);
       position: relative;
-      transform: translateY(-50px);
-      transition: transform 0.3s ease;
+      transform: scale(0.7) translateY(-50px) rotate(-5deg);
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .modal.show .modal-content {
-      transform: translateY(0);
+      transform: scale(1) translateY(0) rotate(0deg);
+      opacity: 1;
     }
 
     .close-modal {
       position: absolute;
-      top: 15px;
-      right: 15px;
-      font-size: 1.5rem;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
       cursor: pointer;
-      color: var(--dark-blue);
+      color: var(--text-light);
       transition: var(--transition);
     }
 
     .close-modal:hover {
-      color: var(--primary-blue);
+      color: white;
+      background: var(--gradient);
       transform: rotate(90deg);
+      border-color: transparent;
     }
 
     footer {
-      background: var(--card-bg);
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--glass-border);
       padding: 50px 0 30px;
       text-align: center;
       margin-top: 80px;
-      border-top: 1px solid rgba(135, 206, 235, 0.2);
     }
 
     .footer-content {
@@ -669,6 +1848,13 @@
     .footer-logo {
       width: 80px;
       margin-bottom: 20px;
+      filter: drop-shadow(0 4px 12px rgba(125, 211, 252, 0.3));
+      transition: var(--transition);
+    }
+
+    .footer-logo:hover {
+      transform: scale(1.1) rotate(-5deg);
+      filter: drop-shadow(0 6px 16px rgba(125, 211, 252, 0.5));
     }
 
     .footer-links {
@@ -680,18 +1866,21 @@
     }
 
     .footer-links a {
-      color: var(--dark-blue);
+      color: var(--text-light);
       text-decoration: none;
       transition: var(--transition);
+      padding: 8px 12px;
+      border-radius: 8px;
     }
 
     .footer-links a:hover {
       color: var(--primary-blue);
+      background: var(--glass-bg);
     }
 
     .copyright {
-      color: var(--dark-blue);
-      margin-top: 20px;
+      color: var(--text-light);
+      margin-top: 24px;
       font-size: 0.9rem;
     }
 
@@ -713,27 +1902,111 @@
 
     @keyframes float {
       0% {
-        transform: translate(0, 0) rotate(0deg);
+        transform: translate(0, 0) rotate(0deg) scale(1);
       }
 
-      50% {
-        transform: translate(20px, 20px) rotate(10deg);
+      33% {
+        transform: translate(30px, -30px) rotate(120deg) scale(1.1);
+      }
+
+      66% {
+        transform: translate(-20px, 20px) rotate(240deg) scale(0.9);
       }
 
       100% {
-        transform: translate(0, 0) rotate(0deg);
+        transform: translate(0, 0) rotate(360deg) scale(1);
       }
     }
 
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px) scale(0.95);
       }
 
       to {
         opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.8;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        transform: scale(1) translateY(0) rotate(0deg);
+      }
+
+      to {
+        opacity: 0;
+        transform: scale(0.7) translateY(-50px) rotate(5deg);
+      }
+    }
+
+    /* Language Switch Animation */
+    .lang-switching {
+      animation: langSwitch 0.4s ease;
+    }
+
+    @keyframes langSwitch {
+      0% {
+        opacity: 1;
         transform: translateY(0);
+      }
+
+      50% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes zoomOut {
+      0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(0.7) rotate(-5deg);
+        opacity: 0;
       }
     }
 
@@ -745,6 +2018,103 @@
       100% {
         transform: translateX(-50%);
       }
+    }
+
+    /* Partner Modal */
+    .partner-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .partner-modal.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .partner-modal-content {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius);
+      padding: 40px;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: var(--shadow);
+      position: relative;
+      transform: scale(0.7) translateY(-50px) rotate(-5deg);
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .partner-modal.show .partner-modal-content {
+      transform: scale(1) translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+
+    .partner-modal-logo {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+      margin: 0 auto 20px;
+      display: block;
+      padding: 20px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .partner-modal-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 15px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .partner-modal-type {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .partner-modal-description {
+      color: var(--text-light);
+      line-height: 1.8;
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 1.05rem;
+    }
+
+    .partner-modal-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      background: var(--gradient);
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 500;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+
+    .partner-modal-link:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
     }
 
     @keyframes particleFloat {
@@ -769,28 +2139,68 @@
 
     @media (max-width: 768px) {
       .navbar {
-        padding: 12px 5%;
-        flex-direction: column;
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 16px;
+        top: auto;
+        padding: 15px 10px;
+        gap: 10px;
       }
 
-      .nav-links {
-        margin-top: 15px;
-        justify-content: center;
+      /* When hidden on mobile, slide further down off-screen */
+      .navbar.hidden {
+        transform: translateX(-50%) translateY(150%);
+      }
+
+      .navbar img {
+        width: 40px;
+        height: 40px;
       }
 
       .navbar a {
-        padding: 8px 12px;
-        font-size: 0.9rem;
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
       }
 
-      .social-icons {
-        margin-top: 15px;
-        margin-left: 0;
+      .nav-arrow { display: inline-flex; }
+
+      .navbar a::before {
+        right: 55px;
+        font-size: 0.85rem;
+        padding: 6px 12px;
+      }
+
+      .social-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+
+      .theme-toggle {
+        width: 40px;
+        height: 40px;
+      }
+
+      .theme-toggle i {
+        font-size: 1rem;
+      }
+
+      .navbar-toggle-btn {
+        width: 45px;
+        height: 45px;
+        right: 10px;
       }
 
       .hero {
-        padding: 100px 5% 60px;
+        padding: 80px 5% 60px;
         background-attachment: scroll;
+        min-height: 90vh;
+      }
+
+      .hero-content {
+        padding: 30px 20px;
       }
 
       .particle {
@@ -803,7 +2213,11 @@
       }
 
       .container {
-        padding: 60px 15px;
+        padding: 70px 20px;
+      }
+
+      .section {
+        margin-bottom: 70px;
       }
 
       h2 {
@@ -817,11 +2231,16 @@
       }
 
       .gallery-item {
-        width: 250px;
+        width: 280px;
+        height: 200px;
+      }
+
+      .gallery-container {
+        padding: 15px 0;
       }
 
       .partners-section {
-        padding: 30px;
+        padding: 30px 20px;
       }
 
       .partner-item {
@@ -829,34 +2248,115 @@
         margin: 0 15px;
       }
 
-      .theme-toggle {
-        bottom: 15px;
-        right: 15px;
-        width: 45px;
-        height: 45px;
+      .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .modal-content {
+        padding: 28px;
+        width: 95%;
+      }
+
+      .partner-modal-content {
+        padding: 30px 20px;
+        width: 95%;
+      }
+
+      .image-modal-header {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+      }
+
+      .image-modal-title {
+        font-size: 1rem;
       }
     }
 
     @media (max-width: 480px) {
+      .navbar {
+        padding: 12px 8px;
+        gap: 10px;
+        bottom: 12px;
+        top: auto;
+      }
+
       .navbar img {
-        height: 40px;
+        height: 35px;
+        width: 35px;
+      }
+
+      .navbar a {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+      }
+
+      .social-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 0.95rem;
+      }
+
+      .theme-toggle {
+        width: 38px;
+        height: 38px;
+      }
+
+      .theme-toggle i {
+        font-size: 1rem;
+      }
+
+      .lang-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 0.65rem;
+      }
+
+      .navbar-toggle-btn {
+        width: 42px;
+        height: 42px;
+        left: 12px;
+        font-size: 1.2rem;
+      }
+
+      .hero {
+        padding: 50px 4% 50px;
+      }
+
+      .hero-content {
+        padding: 25px 15px;
       }
 
       .hero-content h1 {
-        font-size: 2.2rem;
+        font-size: 2rem;
       }
 
       .subtitle {
-        font-size: 1rem;
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+
+      h2 {
+        font-size: 1.8rem;
       }
 
       .btn-container {
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
+        gap: 12px;
+      }
+
+      .cta-btn {
+        padding: 12px 24px;
+        font-size: 0.95rem;
+        width: 100%;
+        justify-content: center;
       }
 
       .team-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
       }
 
       .card {
@@ -864,8 +2364,61 @@
       }
 
       .gallery-item {
-        width: 220px;
+        width: 260px;
         height: 180px;
+      }
+
+      .gallery-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+
+      .gallery-nav.prev {
+        left: 10px;
+      }
+
+      .gallery-nav.next {
+        right: 10px;
+      }
+
+      .image-modal-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+
+      .image-modal-nav.prev {
+        left: 5px;
+      }
+
+      .image-modal-nav.next {
+        right: 5px;
+      }
+
+      .image-modal-close {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+      }
+
+      .image-counter {
+        padding: 6px 14px;
+        font-size: 0.8rem;
+      }
+
+      .image-modal-content img {
+        max-width: 95%;
+        max-height: calc(100vh - 220px);
+      }
+
+      .image-thumbnails {
+        padding: 12px 15px;
+        gap: 8px;
+      }
+
+      .thumbnail-item {
+        width: 70px;
+        height: 50px;
       }
 
       .partners-container {
@@ -874,13 +2427,107 @@
 
       .partner-item {
         width: 140px;
+        padding: 20px;
+      }
+
+      .partner-logo {
+        max-height: 50px;
+      }
+
+      .partner-name {
+        font-size: 0.9rem;
+      }
+
+      .partner-description {
+        font-size: 0.8rem;
+      }
+
+      .container {
+        padding: 60px 15px;
+      }
+
+      .projects-grid {
+        gap: 15px;
+      }
+
+      .project-content {
+        padding: 20px;
+      }
+
+      .project-title {
+        font-size: 1.3rem;
+      }
+
+      .project-links {
+        flex-direction: column;
+      }
+
+      .project-link {
+        width: 100%;
+      }
+
+      .modal-content {
+        padding: 24px;
+        width: 95%;
+      }
+
+      .partner-modal-content {
+        padding: 25px 15px;
+        width: 95%;
+      }
+
+      .partner-modal-logo {
+        width: 120px;
+        height: 120px;
+      }
+
+      .partner-modal-title {
+        font-size: 1.5rem;
+      }
+
+      .partner-modal-description {
+        font-size: 0.95rem;
+      }
+
+      .team-avatar {
+        width: 100px;
         height: 100px;
+      }
+
+      .social-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 0.9rem;
+      }
+
+      .footer-content {
+        padding: 0 15px;
+      }
+
+      .footer-logo {
+        width: 60px;
+      }
+
+      .footer-links {
+        gap: 15px;
+      }
+
+      .footer-links a {
+        font-size: 0.9rem;
       }
     }
   </style>
 </head>
 
 <body>
+
+  <div class="welcome-screen show" id="welcome-screen">
+    <div class="welcome-content">
+      <img src="https://mikufile.felixcraft.xyz/uploads/2d9478097f0b12ff.png" alt="FelixCraft Logo" class="welcome-logo">
+      <h1 class="welcome-title">FelixCraft Official</h1>
+      <p class="welcome-subtitle">ยินดีต้อนรับสู่เซิร์ฟเวอร์โรลเพลย์ Minecraft</p>
+    </div>
+  </div>
 
   <div class="floating-bg">
     <div class="floating-item"></div>
@@ -889,26 +2536,51 @@
     <div class="floating-item"></div>
   </div>
 
-  <div class="theme-toggle" id="theme-toggle">
-    <i class="fas fa-moon"></i>
-  </div>
-
   <nav class="navbar" id="navbar">
-    <img src="https://iili.io/3ws7PNs.png" alt="FelixCraft Official">
-    <div class="nav-links">
-      <a href="#home">หน้าแรก</a>
-      <a href="#about">เกี่ยวกับ</a>
-      <a href="#gallery">ผลงาน</a>
-      <a href="#team">ทีมงาน</a>
-      <a href="#partners">พาร์ทเนอร์</a>
+    <div class="navbar-logo">
+      <img src="https://iili.io/3ws7PNs.png" alt="FelixCraft Official">
     </div>
-    <div class="social-icons">
-      <a href="https://www.tiktok.com/@felixcraft.official/" class="social-icon"><i class="fab fa-tiktok"></i></a>
-      <a href="https://www.youtube.com/@FelixCraft.Official" class="social-icon"><i class="fab fa-youtube"></i></a>
-      <a href="https://www.facebook.com/felixcraft.official" class="social-icon"><i class="fab fa-facebook"></i></a>
-      <a href="https://discord.gg/dnHNdRNZnq" class="social-icon"><i class="fab fa-discord"></i></a>
+    <button class="nav-arrow" id="nav-prev" title="Prev"><i class="fas fa-chevron-left"></i></button>
+    <div class="nav-links" id="nav-links">
+      <a href="#home" data-tooltip="หน้าแรก" data-tooltip-th="หน้าแรก" data-tooltip-en="Home"><i class="fas fa-home"></i></a>
+      <a href="#about" data-tooltip="เกี่ยวกับ" data-tooltip-th="เกี่ยวกับ" data-tooltip-en="About"><i class="fas fa-info-circle"></i></a>
+      <a href="#projects" data-tooltip="โปรเจค" data-tooltip-th="โปรเจค" data-tooltip-en="Projects"><i class="fas fa-folder-open"></i></a>
+      <a href="#gallery" data-tooltip="ผลงาน" data-tooltip-th="ผลงาน" data-tooltip-en="Gallery"><i class="fas fa-images"></i></a>
+      <a href="#team" data-tooltip="ทีมงาน" data-tooltip-th="ทีมงาน" data-tooltip-en="Team"><i class="fas fa-users"></i></a>
+      <a href="#partners" data-tooltip="พาร์ทเนอร์" data-tooltip-th="พาร์ทเนอร์" data-tooltip-en="Partners"><i class="fas fa-handshake"></i></a>
     </div>
+    <button class="nav-arrow" id="nav-next" title="Next"><i class="fas fa-chevron-right"></i></button>
+    <div class="navbar-controls">
+      <button class="theme-toggle" id="navbar-hide-btn" title="ซ่อนแถบเมนู">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="theme-toggle" id="theme-toggle" title="เปลี่ยนธีม">
+        <i class="fas fa-moon"></i>
+      </div>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="th">TH</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+      </div>
+    </div>
+<div class="social-icons">
+  <a href="https://www.tiktok.com/@felixcraft.official/" class="social-icon" target="_blank"
+    rel="noopener noreferrer" aria-label="TikTok" title="TikTok"><i class="fab fa-tiktok"></i></a>
+
+  <a href="https://www.youtube.com/@FelixCraft.Official" class="social-icon" target="_blank"
+    rel="noopener noreferrer" aria-label="YouTube" title="YouTube"><i class="fab fa-youtube"></i></a>
+
+  <a href="https://www.facebook.com/felixcraft.official" class="social-icon" target="_blank"
+    rel="noopener noreferrer" aria-label="Facebook" title="Facebook"><i class="fab fa-facebook"></i></a>
+
+  <a href="https://discord.gg/dnHNdRNZnq" class="social-icon" target="_blank"
+    rel="noopener noreferrer" aria-label="Discord" title="Discord"><i class="fab fa-discord"></i></a>
+</div>
+
   </nav>
+
+  <button class="navbar-toggle-btn" id="navbar-show-btn" title="แสดงแถบเมนู">
+    <i class="fas fa-bars"></i>
+  </button>
 
   <section class="hero" id="home">
     <div class="hero-particles" id="hero-particles"></div>
@@ -917,12 +2589,11 @@
       <div class="subtitle">Roleplay Minecraft bedrock and Java คุณภาพ! เซิร์ฟเวอร์โรลเพลย์ที่ทันสมัยและสนุกสนาน
         พร้อมประสบการณ์การเล่นที่สมจริงที่สุด</div>
       <div class="btn-container">
-        <a href="https://discord.gg/dnHNdRNZnq" class="cta-btn" target="_blank">
-          <i class="fab fa-discord"></i> Join Discord
+        <a href="https://discord.gg/dnHNdRNZnq" class="cta-btn" target="_blank" rel="noopener noreferrer">
+          <i class="fab fa-discord"></i> <span data-th="เข้าร่วม Discord" data-en="Join Discord">เข้าร่วม Discord</span>
         </a>
-        <a href="#about" class="cta-btn"
-          style="background: var(--card-bg); color: var(--primary-blue); border: 2px solid var(--primary-blue);">
-          <i class="fas fa-info-circle"></i> เกี่ยวกับเรา
+        <a href="#about" class="cta-btn cta-btn-secondary">
+          <i class="fas fa-info-circle"></i> <span data-th="เกี่ยวกับเรา" data-en="About Us">เกี่ยวกับเรา</span>
         </a>
       </div>
     </div>
@@ -931,55 +2602,77 @@
   <div class="container">
     <section class="section" id="about">
       <h2>เกี่ยวกับ FelixCraft</h2>
-      <div class="card">
-        <p>FelixCraft คือเซิร์ฟเวอร์โรลเพลย์ Minecraft
+      <div class="card" style="line-height: 1.8; color: var(--text-light);">
+        <p style="margin-bottom: 16px;">FelixCraft คือเซิร์ฟเวอร์โรลเพลย์ Minecraft
           แบบพรีเมียมที่ออกแบบมาเพื่อประสบการณ์การเล่นที่สมจริงและน่าตื่นเต้นที่สุด ด้วยระบบที่ทันสมัยและชุมชนคุณภาพ</p>
         <p>เรากำลังพัฒนาอย่างต่อเนื่อง และจะเปิดรับสมัครสมาชิกในเร็วๆ นี้ ติดตามข่าวสารได้ที่ Discord
           ของเราเพื่อไม่ให้พลาดทุกความเคลื่อนไหว</p>
       </div>
     </section>
 
-    <section class="section" id="gallery">
-      <h2>ผลงานของเรา (คลังรูปภาพ)</h2>
-      <p style="text-align: center; margin-bottom: 20px; color: var(--dark-blue);">ชมผลงานการสร้างสรรค์และพัฒนาของเราใน
-        Minecraft</p>
-      <div class="gallery-container">
-        <div class="gallery-track" id="gallery-track">
-          <div class="gallery-item">
-            <img src="https://iili.io/3ws088B.png" alt="FelixCraft Build 1">
-            <div class="gallery-caption">FelixCraft Bedrock Ss7</div>
-          </div>
-          <div class="gallery-item">
-            <img src="https://iili.io/3wsEMXe.png" alt="FelixCraft Build 2">
-            <div class="gallery-caption">FelixCraft Bedrock Ss6</div>
-          </div>
-          <div class="gallery-item">
-            <img src="https://iili.io/3erxcLG.webp" alt="FelixCraft Build 3">
-            <div class="gallery-caption">FelixCraft Bedrock Ss5</div>
-          </div>
-          <div class="gallery-item">
-            <img src="https://iili.io/3erIJHB.png" alt="FelixCraft Build 4">
-            <div class="gallery-caption">FelixCraft Bedrock Ss4</div>
-          </div>
-          <div class="gallery-item">
-            <img src="https://iili.io/KTMFAQ9.jpg" alt="FelixCraft Build 5">
-            <div class="gallery-caption">FelixCraft Bedrock Ss3</div>
-          </div>
-          <div class="gallery-item">
-            <img src="https://iili.io/KTMKZla.png" alt="FelixCraft Build 6">
-            <div class="gallery-caption">FelixCraft Bedrock Ss7</div>
-          </div>
-        </div>
-
-        <div class="gallery-nav prev" id="gallery-prev">❮</div>
-        <div class="gallery-nav next" id="gallery-next">❯</div>
+    <section class="section" id="projects">
+      <h2>โปรเจคของเรา</h2>
+      <p style="text-align: center; margin-bottom: 40px; color: var(--text-light); font-size: 1.05rem;">
+        <i class="fas fa-rocket" style="margin-right: 8px; color: var(--primary-blue);"></i>
+        <span data-th="โปรเจคและเซิร์ฟเวอร์ที่เรากำลังพัฒนาและดูแล"
+          data-en="Projects and servers we are developing and maintaining">โปรเจคและเซิร์ฟเวอร์ที่เรากำลังพัฒนาและดูแล</span>
+      </p>
+      <div class="projects-grid" id="projects-grid">
       </div>
+    </section>
+
+    <section class="section" id="gallery"></section>
+    <h2 id="gallery-title">ผลงานของเรา (คลังรูปภาพ)</h2>
+    <p style="text-align: center; margin-bottom: 24px; color: var(--text-light); font-size: 1.05rem;">
+      <i class="fas fa-images" style="margin-right: 8px; color: var(--primary-blue);"></i>
+      <span data-th="ชมผลงานการสร้างสรรค์และพัฒนาของเราใน Minecraft (คลิกเพื่อดูขนาดเต็ม)"
+        data-en="View our creative works and developments in Minecraft (Click to view full size)">ชมผลงานการสร้างสรรค์และพัฒนาของเราใน
+        Minecraft (คลิกเพื่อดูขนาดเต็ม)</span>
+    </p>
+    <div class="gallery-container">
+      <div class="gallery-track" id="gallery-track">
+        <div class="gallery-item" data-index="0">
+          <img src="https://iili.io/3ws088B.png" alt="FelixCraft Build 1">
+          <div class="gallery-caption">FelixCraft Bedrock Ss7</div>
+        </div>
+        <div class="gallery-item" data-index="1">
+          <img src="https://iili.io/3wsEMXe.png" alt="FelixCraft Build 2">
+          <div class="gallery-caption">FelixCraft Bedrock Ss6</div>
+        </div>
+        <div class="gallery-item" data-index="2">
+          <img src="https://iili.io/3erxcLG.webp" alt="FelixCraft Build 3">
+          <div class="gallery-caption">FelixCraft Bedrock Ss5</div>
+        </div>
+        <div class="gallery-item" data-index="3">
+          <img src="https://iili.io/3erIJHB.png" alt="FelixCraft Build 4">
+          <div class="gallery-caption">FelixCraft Bedrock Ss4</div>
+        </div>
+        <div class="gallery-item" data-index="4">
+          <img src="https://iili.io/KTMFAQ9.jpg" alt="FelixCraft Build 5">
+          <div class="gallery-caption">FelixCraft Bedrock Ss3</div>
+        </div>
+        <div class="gallery-item" data-index="5">
+          <img src="https://iili.io/KTMKZla.png" alt="FelixCraft Build 6">
+          <div class="gallery-caption">FelixCraft Bedrock Ss2</div>
+        </div>
+      </div>
+
+      <div class="gallery-nav prev" id="gallery-prev">
+        <i class="fas fa-chevron-left"></i>
+      </div>
+      <div class="gallery-nav next" id="gallery-next">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
     </section>
 
     <section class="section" id="team">
       <h2>ทีมพัฒนา</h2>
-      <p style="text-align: center; margin-bottom: 20px; color: var(--dark-blue);">
-        คลิกที่รูปเพื่อดูข้อมูลเพิ่มเติมเกี่ยวกับทีมงานของเรา</p>
+      <p style="text-align: center; margin-bottom: 24px; color: var(--text-light); font-size: 1.05rem;">
+        <i class="fas fa-users" style="margin-right: 8px; color: var(--primary-blue);"></i>
+        <span data-th="คลิกที่การ์ดเพื่อดูข้อมูลเพิ่มเติมเกี่ยวกับทีมงานของเรา"
+          data-en="Click on the card to see more information about our team">คลิกที่การ์ดเพื่อดูข้อมูลเพิ่มเติมเกี่ยวกับทีมงานของเรา</span>
+      </p>
       <div class="team-grid">
         <div class="team-member card" data-member="frame121">
           <img class="team-avatar"
@@ -990,17 +2683,13 @@
           <div class="partner-type">ผู้บริหาร</div>
         </div>
         <div class="team-member card" data-member="nick">
-          <img class="team-avatar"
-            src="https://cdn.discordapp.com/avatars/1271715061727105038/d57a7c2c5028c966da9da945dc762a44?size=1024"
-            alt="Nick">
+          <img class="team-avatar" src="https://mikufile.felixcraft.xyz/uploads/a058d0aec390b1f4.png" alt="Nick">
           <h4>Nick</h4>
           <p>Head Admin</p>
           <div class="partner-type">ผู้ดูแลระบบ</div>
         </div>
         <div class="team-member card" data-member="hun">
-          <img class="team-avatar"
-            src="https://cdn.discordapp.com/avatars/787239141443895317/494b6e43bd05f1e5fe55aed09088685e?size=1024"
-            alt="Hun">
+          <img class="team-avatar" src="https://mikufile.felixcraft.xyz/uploads/3afbdc0e90a0943d.png" alt="Hun">
           <h4>Hun</h4>
           <p>Admin</p>
           <div class="partner-type">แอดมิน</div>
@@ -1020,40 +2709,20 @@
           <h4>Nicekun</h4>
           <p>Admin & Developer</p>
           <div class="partner-type">ผู้พัฒนา</div>
-        </div </div>
+        </div>
+      </div>
     </section>
 
     <section class="section" id="partners">
       <div class="partners-section">
         <h2>พาร์ทเนอร์ & สปอนเซอร์</h2>
-        <p style="text-align: center; margin-bottom: 20px; color: var(--dark-blue);">ผู้สนับสนุนและพาร์ทเนอร์ของเรา</p>
+        <p style="text-align: center; margin-bottom: 24px; color: var(--text-light); font-size: 1.05rem;">
+          <i class="fas fa-handshake" style="margin-right: 8px; color: var(--primary-blue);"></i>
+          <span data-th="ผู้สนับสนุนและพาร์ทเนอร์ของเรา"
+            data-en="Our Supporters and Partners">ผู้สนับสนุนและพาร์ทเนอร์ของเรา</span>
+        </p>
         <div class="partners-container">
-          <div class="partners-track">
-            <!-- First set -->
-            <div class="partner-item">
-              <img src="https://iili.io/KTGyDqx.png" alt="Partner 1" class="partner-logo">
-              <div class="partner-type">Partner</div>
-            </div>
-            <div class="partner-item">
-              <img src="https://iili.io/KTGmDhb.md.png" alt="Sponsor 1" class="partner-logo">
-              <div class="partner-type">Sponsor</div>
-            </div>
-            <div class="partner-item">
-              <img src="https://iili.io/KTMJcb9.jpg" alt="Sponsor 2" class="partner-logo">
-              <div class="partner-type">Sponsor</div>
-            </div>
-            <div class="partner-item">
-              <img src="https://iili.io/KTGyDqx.png" alt="Partner 1" class="partner-logo">
-              <div class="partner-type">Partner</div>
-            </div>
-            <div class="partner-item">
-              <img src="https://iili.io/KTGmDhb.md.png" alt="Sponsor 1" class="partner-logo">
-              <div class="partner-type">Sponsor</div>
-            </div>
-            <div class="partner-item">
-              <img src="https://iili.io/KTMJcb9.jpg" alt="Sponsor 2" class="partner-logo">
-              <div class="partner-type">Sponsor</div>
-            </div>
+          <div class="partners-track" id="partners-track">
           </div>
         </div>
       </div>
@@ -1067,30 +2736,163 @@
     </div>
   </div>
 
+  <div class="partner-modal" id="partner-modal">
+    <div class="partner-modal-content">
+      <span class="close-modal" id="close-partner-modal">&times;</span>
+      <div id="partner-modal-body"></div>
+    </div>
+  </div>
+
+  <div class="partner-modal" id="project-modal">
+    <div class="partner-modal-content">
+      <span class="close-modal" id="close-project-modal">&times;</span>
+      <div id="project-modal-body"></div>
+    </div>
+  </div>
+
+  <div class="ad-modal" id="ad-modal">
+    <div class="ad-modal-content">
+      <div class="ad-modal-close" id="ad-modal-close">&times;</div>
+      <div class="ad-image-container">
+        <img id="ad-image" src="" alt="Visperhost Advertisement" class="ad-image">
+      </div>
+      <div class="ad-content" id="ad-content">
+        <p class="ad-text" data-th="หากสนใจให้เข้าไปที่" data-en="If interested, please visit">
+          หากสนใจให้เข้าไปที่
+        </p>
+        <h3 class="ad-website">visperhost.net</h3>
+        <div class="ad-buttons">
+          <a href="https://visperhost.net" class="ad-button" target="_blank" rel="noopener noreferrer">
+            <i class="fas fa-external-link-alt"></i>
+            <span data-th="เข้าชมเว็บไซต์" data-en="Visit Website">เข้าชมเว็บไซต์</span>
+          </a>
+          <button class="ad-button secondary" id="ad-skip">
+            <span data-th="ปิด" data-en="Close">ปิด</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="image-modal" id="image-modal">
+    <div class="image-modal-header">
+      <div class="image-modal-title">ผลงานของเรา</div>
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <div class="image-counter" id="image-counter">1 / 6</div>
+        <button class="image-modal-close" id="image-modal-close">
+          <span data-th="ปิด" data-en="Close">ปิด</span>
+        </button>
+      </div>
+    </div>
+    <div class="image-modal-content">
+      <img id="modal-image" src="" alt="Gallery Image">
+      <div class="image-modal-nav prev" id="modal-prev">
+        <i class="fas fa-chevron-left"></i>
+      </div>
+      <div class="image-modal-nav next" id="modal-next">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+    <div class="image-thumbnails" id="image-thumbnails">
+    </div>
+  </div>
+
   <footer>
     <div class="footer-content">
       <img src="https://iili.io/3ws7PNs.png" alt="FelixCraft Logo" class="footer-logo">
       <div class="footer-links">
-        <a href="#home">หน้าแรก</a>
-        <a href="#about">เกี่ยวกับ</a>
-        <a href="#gallery">ผลงาน</a>
-        <a href="#team">ทีมงาน</a>
-        <a href="#partners">พาร์ทเนอร์</a>
-        <a href="https://discord.gg/dnHNdRNZnq">Discord</a>
+        <a href="#home" data-th="หน้าแรก" data-en="Home">หน้าแรก</a>
+        <a href="#about" data-th="เกี่ยวกับ" data-en="About">เกี่ยวกับ</a>
+        <a href="#projects" data-th="โปรเจค" data-en="Projects">โปรเจค</a>
+        <a href="#gallery" data-th="ผลงาน" data-en="Gallery">ผลงาน</a>
+        <a href="#team" data-th="ทีมงาน" data-en="Team">ทีมงาน</a>
+        <a href="#partners" data-th="พาร์ทเนอร์" data-en="Partners">พาร์ทเนอร์</a>
+        <a href="https://discord.gg/dnHNdRNZnq" data-th="Discord" data-en="Discord">Discord</a>
       </div>
       <div class="social-icons" style="justify-content: center; margin: 20px 0;">
-        <a href="https://www.tiktok.com/@felixcraft.official/" class="social-icon"><i class="fab fa-tiktok"></i></a>
-        <a href="https://www.youtube.com/@FelixCraft.Official" class="social-icon"><i class="fab fa-youtube"></i></a>
-        <a href="https://www.facebook.com/felixcraft.official" class="social-icon"><i class="fab fa-facebook"></i></a>
-        <a href="https://discord.gg/dnHNdRNZnq" class="social-icon"><i class="fab fa-discord"></i></a>
+        <a href="https://www.tiktok.com/@felixcraft.official/" class="social-icon" target="_blank"
+          rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        <a href="https://www.youtube.com/@FelixCraft.Official" class="social-icon" target="_blank"
+          rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.facebook.com/felixcraft.official" class="social-icon" target="_blank"
+          rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+        <a href="https://discord.gg/dnHNdRNZnq" class="social-icon" target="_blank" rel="noopener noreferrer"
+          aria-label="Discord"><i class="fab fa-discord"></i></a>
       </div>
-      <p class="copyright">©2023 - ©2025 FelixCraft | Powered by Frame121</p>
+      <p class="copyright">©2023 - ©2026 FelixCraft | Powered by Frame121</p>
     </div>
   </footer>
 
   <script>
+    window.addEventListener('load', function () {
+      const welcomeScreen = document.getElementById('welcome-screen');
+
+      setTimeout(() => {
+        welcomeScreen.classList.add('fade-out');
+        setTimeout(() => {
+          welcomeScreen.remove();
+          showAdvertisement();
+        }, 800);
+      }, 2500);
+    });
+
+    function showAdvertisement() {
+      const adModal = document.getElementById('ad-modal');
+      const adImage = document.getElementById('ad-image');
+      const adModalClose = document.getElementById('ad-modal-close');
+      const adContent = document.getElementById('ad-content');
+      const adImageContainer = document.querySelector('.ad-image-container');
+      const modalContent = adModal.querySelector('.ad-modal-content');
+
+      const adImages = [
+        'https://mikufile.felixcraft.xyz/uploads/107d7c896a0d4adb.jpg',
+        'https://mikufile.felixcraft.xyz/uploads/bbe7bb5ad7a20930.jpg',
+        'https://mikufile.felixcraft.xyz/uploads/f0460a9c153e41f3.jpg'
+      ];
+      adImage.src = adImages[Math.floor(Math.random() * adImages.length)];
+      adContent.style.display = 'block';
+      adContent.style.visibility = 'visible';
+      adContent.style.opacity = '1';
+      adImageContainer.style.padding = '15px';
+      adImageContainer.style.background = '#f8f9fa';
+      adImage.style.borderRadius = '8px';
+
+      modalContent.style.maxWidth = '500px';
+      modalContent.style.background = 'var(--glass-bg)';
+      modalContent.style.border = '1px solid var(--glass-border)';
+      modalContent.style.padding = '0';
+
+      adModal.classList.add('show');
+
+      function closeAdvertisement() {
+        modalContent.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+          adModal.classList.remove('show');
+          modalContent.style.animation = '';
+        }, 300);
+      }
+
+      adModalClose.addEventListener('click', function () {
+        closeAdvertisement();
+      }, { once: true });
+
+      const adSkip = document.getElementById('ad-skip');
+      if (adSkip) {
+        adSkip.addEventListener('click', function () {
+          closeAdvertisement();
+        }, { once: true });
+      }
+
+      const clickHandler = function (e) {
+        if (e.target === adModal) {
+          closeAdvertisement();
+          adModal.removeEventListener('click', clickHandler);
+        }
+      };
+      adModal.addEventListener('click', clickHandler);
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
-      // Create floating particles
       function createParticles() {
         const particlesContainer = document.getElementById('hero-particles');
         const particleCount = 50;
@@ -1106,6 +2908,20 @@
       }
 
       createParticles();
+
+      const navbar = document.getElementById('navbar');
+      const navbarHideBtn = document.getElementById('navbar-hide-btn');
+      const navbarShowBtn = document.getElementById('navbar-show-btn');
+
+      navbarHideBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        navbar.classList.add('hidden');
+      });
+
+      navbarShowBtn.addEventListener('click', function () {
+        navbar.classList.remove('hidden');
+      });
+
       const themeToggle = document.getElementById('theme-toggle');
       const themeIcon = themeToggle.querySelector('i');
 
@@ -1143,13 +2959,36 @@
       });
 
       window.addEventListener('scroll', function () {
-        const navbar = document.getElementById('navbar');
         if (window.scrollY > 50) {
           navbar.classList.add('scrolled');
         } else {
           navbar.classList.remove('scrolled');
         }
       });
+
+      // Navbar arrow scroll controls
+      const navLinks = document.getElementById('nav-links');
+      const navPrev = document.getElementById('nav-prev');
+      const navNext = document.getElementById('nav-next');
+
+      function updateNavArrows() {
+        if (!navLinks) return;
+        const atStart = navLinks.scrollLeft <= 0;
+        const atEnd = Math.ceil(navLinks.scrollLeft + navLinks.clientWidth) >= navLinks.scrollWidth;
+        if (navPrev) navPrev.style.opacity = atStart ? '0.4' : '1';
+        if (navNext) navNext.style.opacity = atEnd ? '0.4' : '1';
+      }
+
+      function scrollNavBy(delta) {
+        if (!navLinks) return;
+        navLinks.scrollBy({ left: delta, behavior: 'smooth' });
+        setTimeout(updateNavArrows, 300);
+      }
+
+      if (navPrev) navPrev.addEventListener('click', () => scrollNavBy(-120));
+      if (navNext) navNext.addEventListener('click', () => scrollNavBy(120));
+      if (navLinks) navLinks.addEventListener('scroll', updateNavArrows);
+      updateNavArrows();
 
       document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -1168,21 +3007,34 @@
       const galleryPrev = document.getElementById('gallery-prev');
       const galleryNext = document.getElementById('gallery-next');
       let galleryPosition = 0;
+      let isGalleryAnimating = false;
+
+      function smoothGalleryScroll(newPosition) {
+        if (isGalleryAnimating) return;
+        isGalleryAnimating = true;
+
+        galleryPosition = newPosition;
+        galleryTrack.style.transform = `translateX(-${galleryPosition}px)`;
+
+        setTimeout(() => {
+          isGalleryAnimating = false;
+        }, 800);
+      }
 
       galleryNext.addEventListener('click', function () {
-        galleryPosition += 320;
-        if (galleryPosition > 320 * 3) {
-          galleryPosition = 0;
+        let newPosition = galleryPosition + 344;
+        if (newPosition > 344 * 3) {
+          newPosition = 0;
         }
-        galleryTrack.style.transform = `translateX(-${galleryPosition}px)`;
+        smoothGalleryScroll(newPosition);
       });
 
       galleryPrev.addEventListener('click', function () {
-        galleryPosition -= 320;
-        if (galleryPosition < 0) {
-          galleryPosition = 320 * 3;
+        let newPosition = galleryPosition - 344;
+        if (newPosition < 0) {
+          newPosition = 344 * 3;
         }
-        galleryTrack.style.transform = `translateX(-${galleryPosition}px)`;
+        smoothGalleryScroll(newPosition);
       });
 
       const memberModal = document.getElementById('member-modal');
@@ -1229,10 +3081,12 @@
 
           modalBody.innerHTML = `
             <div style="text-align: center;">
-              <img src="${this.querySelector('img').src}" alt="${memberData.name}" style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--primary-blue); margin-bottom: 15px;">
-              <h3 style="color: var(--primary-blue); margin-bottom: 10px;">${memberData.name}</h3>
-              <p style="color: var(--dark-blue); margin-bottom: 15px; font-weight: 500;">${memberData.role}</p>
-              <p style="color: var(--dark-blue); margin-bottom: 20px; line-height: 1.6;">${memberData.desc}</p>
+              <div style="position: relative; display: inline-block; margin-bottom: 20px;">
+                <img src="${this.querySelector('img').src}" alt="${memberData.name}" style="width: 130px; height: 130px; border-radius: 50%; border: 3px solid transparent; background: var(--gradient); padding: 3px; box-shadow: var(--shadow);">
+              </div>
+              <h3 style="background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 12px; font-size: 1.6rem; font-weight: 600;">${memberData.name}</h3>
+              <p style="color: var(--text-light); margin-bottom: 16px; font-weight: 500; font-size: 1.05rem;">${memberData.role}</p>
+              <p style="color: var(--text-light); margin-bottom: 24px; line-height: 1.7;">${memberData.desc}</p>
               <a href="${memberData.discord}" class="cta-btn" target="_blank" style="display: inline-flex;">
                 <i class="fab fa-discord"></i> Discord Profile
               </a>
@@ -1244,12 +3098,459 @@
       });
 
       closeModal.addEventListener('click', function () {
-        memberModal.classList.remove('show');
+        const modalContent = memberModal.querySelector('.modal-content');
+        modalContent.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+          memberModal.classList.remove('show');
+          modalContent.style.animation = '';
+        }, 300);
       });
 
       window.addEventListener('click', function (e) {
         if (e.target === memberModal) {
-          memberModal.classList.remove('show');
+          const modalContent = memberModal.querySelector('.modal-content');
+          modalContent.style.animation = 'fadeOut 0.3s ease';
+          setTimeout(() => {
+            memberModal.classList.remove('show');
+            modalContent.style.animation = '';
+          }, 300);
+        }
+      });
+
+      const translations = {
+        th: {
+          home: 'หน้าแรก',
+          about: 'เกี่ยวกับ',
+          projects: 'โปรเจค',
+          gallery: 'ผลงาน',
+          team: 'ทีมงาน',
+          partners: 'พาร์ทเนอร์',
+          title: 'FelixCraft Official',
+          subtitle: 'Roleplay Minecraft bedrock and Java คุณภาพ! เซิร์ฟเวอร์โรลเพลย์ที่ทันสมัยและสนุกสนาน พร้อมประสบการณ์การเล่นที่สมจริงที่สุด',
+          aboutTitle: 'เกี่ยวกับ FelixCraft',
+          projectsTitle: 'โปรเจคของเรา',
+          galleryTitle: 'ผลงานของเรา (คลังรูปภาพ)',
+          teamTitle: 'ทีมพัฒนา',
+          partnersTitle: 'พาร์ทเนอร์ & สปอนเซอร์'
+        },
+        en: {
+          home: 'Home',
+          about: 'About',
+          projects: 'Projects',
+          gallery: 'Gallery',
+          team: 'Team',
+          partners: 'Partners',
+          title: 'FelixCraft Official',
+          subtitle: 'Quality Minecraft Roleplay Server for Bedrock and Java Edition! Modern and fun roleplay server with the most realistic gaming experience',
+          aboutTitle: 'About FelixCraft',
+          projectsTitle: 'Our Projects',
+          galleryTitle: 'Our Works (Gallery)',
+          teamTitle: 'Development Team',
+          partnersTitle: 'Partners & Sponsors'
+        }
+      };
+
+      let currentLang = 'th';
+
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+          const lang = this.getAttribute('data-lang');
+          if (lang === currentLang) return;
+
+          currentLang = lang;
+
+          document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+
+          const elementsToAnimate = [
+            ...document.querySelectorAll('.nav-links a'),
+            ...document.querySelectorAll('[data-th][data-en]'),
+            document.querySelector('.hero-content h1'),
+            document.querySelector('.subtitle'),
+            document.querySelector('#about h2'),
+            document.querySelector('#gallery-title'),
+            document.querySelector('#team h2'),
+            document.querySelector('.partners-section h2')
+          ];
+
+          elementsToAnimate.forEach(el => {
+            if (el) el.classList.add('lang-switching');
+          });
+
+          setTimeout(() => {
+            document.querySelectorAll('[data-th][data-en]').forEach(el => {
+              el.textContent = el.getAttribute('data-' + lang);
+            });
+
+            document.querySelector('.hero-content h1').textContent = translations[lang].title;
+            document.querySelector('.subtitle').textContent = translations[lang].subtitle;
+            document.querySelector('#about h2').textContent = translations[lang].aboutTitle;
+            document.querySelector('#projects h2').textContent = translations[lang].projectsTitle;
+            const galleryTitleEl = document.querySelector('#gallery-title');
+            if (galleryTitleEl) galleryTitleEl.textContent = translations[lang].galleryTitle;
+            document.querySelector('#team h2').textContent = translations[lang].teamTitle;
+            document.querySelector('.partners-section h2').textContent = translations[lang].partnersTitle;
+
+            // Update navbar tooltips per language
+            document.querySelectorAll('.nav-links a[data-tooltip-th][data-tooltip-en]').forEach(link => {
+              const tt = link.getAttribute('data-tooltip-' + lang);
+              if (tt) link.setAttribute('data-tooltip', tt);
+            });
+
+            setTimeout(() => {
+              elementsToAnimate.forEach(el => {
+                if (el) el.classList.remove('lang-switching');
+              });
+            }, 400);
+          }, 200);
+        });
+      });
+
+      const imageModal = document.getElementById('image-modal');
+      const modalImage = document.getElementById('modal-image');
+      const imageModalClose = document.getElementById('image-modal-close');
+      const modalPrev = document.getElementById('modal-prev');
+      const modalNext = document.getElementById('modal-next');
+      const imageThumbnails = document.getElementById('image-thumbnails');
+
+      const galleryImages = [
+        'https://iili.io/3ws088B.png',
+        'https://iili.io/3wsEMXe.png',
+        'https://iili.io/3erxcLG.webp',
+        'https://iili.io/3erIJHB.png',
+        'https://iili.io/KTMFAQ9.jpg',
+        'https://iili.io/KTMKZla.png'
+      ];
+
+      let currentImageIndex = 0;
+
+      const imageCounter = document.getElementById('image-counter');
+
+      function generateThumbnails() {
+        imageThumbnails.innerHTML = '';
+        galleryImages.forEach((img, index) => {
+          const thumb = document.createElement('div');
+          thumb.className = 'thumbnail-item';
+          if (index === currentImageIndex) {
+            thumb.classList.add('active');
+          }
+          thumb.innerHTML = `<img src="${img}" alt="Thumbnail ${index + 1}">`;
+          thumb.addEventListener('click', () => {
+            currentImageIndex = index;
+            updateGalleryDisplay();
+          });
+          imageThumbnails.appendChild(thumb);
+        });
+      }
+
+      function updateGalleryDisplay() {
+        modalImage.style.opacity = '0';
+
+        setTimeout(() => {
+          modalImage.src = galleryImages[currentImageIndex];
+          imageCounter.textContent = `${currentImageIndex + 1} / ${galleryImages.length}`;
+
+          document.querySelectorAll('.thumbnail-item').forEach((thumb, index) => {
+            if (index === currentImageIndex) {
+              thumb.classList.add('active');
+            } else {
+              thumb.classList.remove('active');
+            }
+          });
+
+          modalImage.style.opacity = '1';
+        }, 200);
+      }
+
+      document.querySelectorAll('.gallery-item').forEach(item => {
+        item.addEventListener('click', function () {
+          currentImageIndex = parseInt(this.getAttribute('data-index'));
+          generateThumbnails();
+          updateGalleryDisplay();
+          imageModal.classList.add('show');
+        });
+      });
+
+      imageModalClose.addEventListener('click', function () {
+        const modalContent = imageModal.querySelector('.image-modal-content');
+        modalContent.style.animation = 'zoomOut 0.3s ease';
+        setTimeout(() => {
+          imageModal.classList.remove('show');
+          modalContent.style.animation = '';
+        }, 300);
+      });
+
+      modalPrev.addEventListener('click', function (e) {
+        e.stopPropagation();
+        currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+        updateGalleryDisplay();
+      });
+
+      modalNext.addEventListener('click', function (e) {
+        e.stopPropagation();
+        currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+        updateGalleryDisplay();
+      });
+
+      imageModal.addEventListener('click', function (e) {
+        if (e.target === imageModal) {
+          const modalContent = imageModal.querySelector('.image-modal-content');
+          modalContent.style.animation = 'zoomOut 0.3s ease';
+          setTimeout(() => {
+            imageModal.classList.remove('show');
+            modalContent.style.animation = '';
+          }, 300);
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (imageModal.classList.contains('show')) {
+          if (e.key === 'ArrowLeft') {
+            modalPrev.click();
+          } else if (e.key === 'ArrowRight') {
+            modalNext.click();
+          } else if (e.key === 'Escape') {
+            const modalContent = imageModal.querySelector('.image-modal-content');
+            modalContent.style.animation = 'zoomOut 0.3s ease';
+            setTimeout(() => {
+              imageModal.classList.remove('show');
+              modalContent.style.animation = '';
+            }, 300);
+          }
+        }
+      });
+
+      const partnersData = [
+        {
+          name: "Spacelogic",
+          logo: "https://iili.io/KTGyDqx.png",
+          type: "Partner",
+          description: "พาร์ทเนอร์ที่ร่วมงานกับเรามาอย่างยาวนาน มีส่วนช่วยในการพัฒนาและสนับสนุนโครงการต่างๆ",
+          link: "https://discord.gg/RAwfSKqssg",
+          linkType: "discord"
+        },
+        {
+          name: "Ai Cloud",
+          logo: "https://iili.io/KTGmDhb.md.png",
+          type: "Sponsor",
+          description: "ผู้สนับสนุนหลักที่ให้การสนับสนุนด้านทรัพยากรและงบประมาณในการพัฒนาเซิร์ฟเวอร์",
+          link: "https://aicloud.co.th",
+          linkType: "website"
+        },
+        {
+          name: "Visperhost",
+          logo: "https://iili.io/KTMJcb9.jpg",
+          type: "Sponsor",
+          description: "ผู้สนับสนุนที่ช่วยเหลือในด้านเทคนิคและให้คำปรึกษาในการพัฒนาระบบต่างๆ",
+          link: "https://visperhost.net",
+          linkType: "website"
+        }
+      ];
+
+      const partnersTrack = document.getElementById('partners-track');
+
+      function generatePartners() {
+        partnersTrack.innerHTML = '';
+        const allPartners = [...partnersData, ...partnersData];
+
+        allPartners.forEach((partner, index) => {
+          const partnerItem = document.createElement('div');
+          partnerItem.className = 'partner-item';
+          partnerItem.setAttribute('data-partner-index', index % partnersData.length);
+          partnerItem.innerHTML = `
+            <img src="${partner.logo}" alt="${partner.name}" class="partner-logo">
+            <div class="partner-name">${partner.name}</div>
+            <div class="partner-type">${partner.type}</div>
+          `;
+          partnerItem.addEventListener('click', () => openPartnerModal(index % partnersData.length));
+          partnersTrack.appendChild(partnerItem);
+        });
+      }
+
+      generatePartners();
+
+      const projectsData = [
+        {
+          title: "FelixCraft Bedrock",
+          image: "https://mikufile.felixcraft.xyz/uploads/cb124a8b4be2ce0b.png",
+          status: "active",
+          statusText: { th: "เปิดให้บริการ", en: "Active" },
+          description: "เซิร์ฟเวอร์โรลเพลย์ Minecraft Bedrock Edition พร้อมระบบที่ทันสมัยและชุมชนที่เป็นมิตร",
+          tags: ["Bedrock", "Roleplay", "Community"],
+          links: [
+            { text: { th: "เข้าร่วม", en: "Join" }, url: "https://discord.com/invite/dnHNdRNZnq", icon: "fas fa-play" }
+          ]
+        },
+        {
+          title: "FelixCraft Java",
+          image: "http://1000logos.net/wp-content/uploads/2025/03/question-mark.png",
+          status: "development",
+          statusText: { th: "อาจยุติ", en: "May Discontinue" },
+          description: "โปรเจคเซิร์ฟเวอร์ Minecraft Java Edition ที่อาจมีการยุติการพัฒนา",
+          tags: ["Java", "Roleplay", "Uncertain"],
+          detailedInfo: {
+            th: "FelixCraft Java Edition เป็นโปรเจคที่กำลังพิจารณาและอาจมีการยุติการพัฒนา เนื่องจากข้อจำกัดด้านทรัพยากรและการวางแผนในอนาคต อย่างไรก็ตาม โปรเจคนี้อาจเปลี่ยนเป็น Empathy Project แทน ขณะนี้เรากำลังประเมินความเป็นไปได้ หากมีการตัดสินใจจะแจ้งให้ทราบผ่านทาง Discord",
+            en: "FelixCraft Java Edition is a project under consideration and may be discontinued due to resource constraints and future planning. However, this project may be transformed into Empathy Project instead. We are currently evaluating the feasibility. Any decisions will be announced via Discord."
+          },
+          links: [
+            { text: { th: "ข้อมูลเพิ่มเติม", en: "More Info" }, url: "#", icon: "fas fa-info-circle", secondary: true, modal: true }
+          ]
+        },
+        {
+          title: "FelixCraft Mikufile",
+          image: "https://mikufile.felixcraft.xyz/uploads/bde45e1346a6d706.png",
+          status: "active",
+          statusText: { th: "เปิดให้บริการ", en: "Active" },
+          description: "ระบบจัดการไฟล์และแชร์ไฟล์สำหรับชุมชน FelixCraft พร้อมความปลอดภัยสูง",
+          tags: ["File Sharing", "Storage", "Community"],
+          links: [
+            { text: { th: "เยี่ยมชม", en: "Visit" }, url: "https://mikufile.felixcraft.xyz", icon: "fas fa-external-link-alt" }
+          ]
+        }
+      ];
+
+      const projectsGrid = document.getElementById('projects-grid');
+
+      function generateProjects() {
+        projectsGrid.innerHTML = '';
+        projectsData.forEach((project, index) => {
+          const projectCard = document.createElement('div');
+          projectCard.className = 'project-card card';
+
+          const linksHTML = project.links.map(link => {
+            if (link.modal) {
+              return `<button class="project-link ${link.secondary ? 'secondary' : ''}" data-project-index="${index}">
+                <i class="${link.icon}"></i>
+                <span data-th="${link.text.th}" data-en="${link.text.en}">${link.text.th}</span>
+              </button>`;
+            } else {
+              return `<a href="${link.url}" class="project-link ${link.secondary ? 'secondary' : ''}" target="_blank" rel="noopener noreferrer">
+                <i class="${link.icon}"></i>
+                <span data-th="${link.text.th}" data-en="${link.text.en}">${link.text.th}</span>
+              </a>`;
+            }
+          }).join('');
+
+          projectCard.innerHTML = `
+            <img src="${project.image}" alt="${project.title}" class="project-image">
+            <div class="project-content">
+              <h3 class="project-title">${project.title}</h3>
+              <span class="project-status ${project.status}" data-th="${project.statusText.th}" data-en="${project.statusText.en}">${project.statusText.th}</span>
+              <p class="project-description">${project.description}</p>
+              <div class="project-tags">
+                ${project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+              </div>
+              <div class="project-links">
+                ${linksHTML}
+              </div>
+            </div>
+          `;
+          projectsGrid.appendChild(projectCard);
+        });
+
+        document.querySelectorAll('.project-link[data-project-index]').forEach(btn => {
+          btn.addEventListener('click', function () {
+            const index = parseInt(this.getAttribute('data-project-index'));
+            openProjectModal(index);
+          });
+        });
+      }
+
+      generateProjects();
+
+      const projectModal = document.getElementById('project-modal');
+      const projectModalBody = document.getElementById('project-modal-body');
+      const closeProjectModal = document.getElementById('close-project-modal');
+
+      function openProjectModal(index) {
+        const project = projectsData[index];
+        const currentLang = document.querySelector('.lang-btn.active').getAttribute('data-lang');
+        const detailedInfo = project.detailedInfo ? project.detailedInfo[currentLang] : project.description;
+
+        projectModalBody.innerHTML = `
+          <img src="${project.image}" alt="${project.title}" class="partner-modal-logo" style="border-radius: 16px;">
+          <h3 class="partner-modal-title">${project.title}</h3>
+          <div class="partner-modal-type">
+            <span class="project-status ${project.status}">${project.statusText[currentLang]}</span>
+          </div>
+          <p class="partner-modal-description">${detailedInfo}</p>
+          <div class="project-tags" style="justify-content: center; margin-bottom: 20px;">
+            ${project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+          </div>
+          <div style="text-align: center;">
+            <a href="https://discord.com/invite/dnHNdRNZnq" class="partner-modal-link" target="_blank" rel="noopener noreferrer">
+              <i class="fab fa-discord"></i>
+              <span data-th="ติดตามข่าวสารใน Discord" data-en="Follow Updates on Discord">ติดตามข่าวสารใน Discord</span>
+            </a>
+          </div>
+        `;
+        projectModal.classList.add('show');
+      }
+
+      closeProjectModal.addEventListener('click', function () {
+        const modalContent = projectModal.querySelector('.partner-modal-content');
+        modalContent.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+          projectModal.classList.remove('show');
+          modalContent.style.animation = '';
+        }, 300);
+      });
+
+      projectModal.addEventListener('click', function (e) {
+        if (e.target === projectModal) {
+          const modalContent = projectModal.querySelector('.partner-modal-content');
+          modalContent.style.animation = 'fadeOut 0.3s ease';
+          setTimeout(() => {
+            projectModal.classList.remove('show');
+            modalContent.style.animation = '';
+          }, 300);
+        }
+      });
+
+      const partnerModal = document.getElementById('partner-modal');
+      const partnerModalBody = document.getElementById('partner-modal-body');
+      const closePartnerModal = document.getElementById('close-partner-modal');
+
+      function openPartnerModal(index) {
+        const partner = partnersData[index];
+        const linkIcon = partner.linkType === 'discord' ? 'fab fa-discord' : 'fas fa-external-link-alt';
+        const linkTextTH = partner.linkType === 'discord' ? 'เข้าร่วม Discord' : 'เยี่ยมชมเว็บไซต์';
+        const linkTextEN = partner.linkType === 'discord' ? 'Join Discord' : 'Visit Website';
+
+        partnerModalBody.innerHTML = `
+          <img src="${partner.logo}" alt="${partner.name}" class="partner-modal-logo">
+          <h3 class="partner-modal-title">${partner.name}</h3>
+          <div class="partner-modal-type">
+            <div class="partner-type">${partner.type}</div>
+          </div>
+          <p class="partner-modal-description">${partner.description}</p>
+          <div style="text-align: center;">
+            <a href="${partner.link}" class="partner-modal-link" target="_blank" rel="noopener noreferrer">
+              <i class="${linkIcon}"></i>
+              <span data-th="${linkTextTH}" data-en="${linkTextEN}">${linkTextTH}</span>
+            </a>
+          </div>
+        `;
+        partnerModal.classList.add('show');
+      }
+
+      closePartnerModal.addEventListener('click', function () {
+        const modalContent = partnerModal.querySelector('.partner-modal-content');
+        modalContent.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+          partnerModal.classList.remove('show');
+          modalContent.style.animation = '';
+        }, 300);
+      });
+
+      partnerModal.addEventListener('click', function (e) {
+        if (e.target === partnerModal) {
+          const modalContent = partnerModal.querySelector('.partner-modal-content');
+          modalContent.style.animation = 'fadeOut 0.3s ease';
+          setTimeout(() => {
+            partnerModal.classList.remove('show');
+            modalContent.style.animation = '';
+          }, 300);
         }
       });
     });
