@@ -1167,14 +1167,39 @@
     }
 
     @media (max-width: 768px) {
-
       .nav-item span,
       .nav-brand span {
-        display: none;
+        display: none !important;
       }
 
       .navbar {
-        max-width: 92%;
+        max-width: 96%;
+        height: 50px !important;
+        padding: 0 8px;
+        top: 12px;
+      }
+
+      .nav-links {
+        gap: 2px;
+      }
+
+      .nav-item {
+        padding: 6px 8px;
+        font-size: 1rem;
+      }
+
+      .theme-toggle {
+        width: 32px;
+        height: 32px;
+        font-size: 0.85rem;
+      }
+
+      #hero-clock {
+        top: 75px; 
+        right: 12px;
+        padding: 5px 12px;
+        font-size: 0.85rem;
+        border-radius: 12px;
       }
 
       .footer-grid {
@@ -1187,25 +1212,83 @@
       }
 
       .marquee-content {
-        gap: 40px;
+        gap: 32px;
+      }
+
+      .marquee-content span {
+        font-size: 1.2rem;
       }
 
       .hero {
         min-height: 100vh;
-        padding-top: 120px;
+        padding-top: 100px;
+      }
+
+      .hero h1 {
+        font-size: clamp(2rem, 10vw, 3.2rem);
+        margin-bottom: 12px;
+        letter-spacing: -1px;
+      }
+
+      .hero p {
+        font-size: 0.95rem;
+        margin-bottom: 24px;
+        padding: 0 16px;
+        line-height: 1.6;
+      }
+
+      .ip-box {
+        padding: 10px 20px;
+        font-size: 0.9rem;
       }
 
       .partners-section {
-        padding: 60px 0;
+        padding: 40px 0;
       }
 
       .about-card {
-        padding: 32px 24px;
+        padding: 32px 20px;
+        font-size: 1rem;
       }
 
       .gallery-item {
-        width: 260px;
-        height: 180px;
+        width: 240px;
+        height: 160px;
+      }
+
+      .image-modal-header {
+        padding: 12px;
+      }
+
+      .image-modal-title {
+        font-size: 0.9rem;
+      }
+
+      .image-modal-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+        padding: 20px 16px 60px;
+      }
+      
+      .feature-card {
+        padding: 40px 24px;
+      }
+
+      .team-card img {
+        width: 80px !important;
+        height: 80px !important;
+      }
+
+      .ip-box {
+        padding: 12px 24px;
+        font-size: 0.95rem;
       }
     }
   </style>
@@ -1740,9 +1823,9 @@
   const heroMedia = [
     { type: 'image', url: 'https://cdn.discordapp.com/attachments/1294284728157081685/1482331857260646531/Screenshot_42.png?ex=69b6909f&is=69b53f1f&hm=5c49f897360562d69bcb0900ac12c2779113eddf9994cd25bcbdf7965d8e0294&' },
     { type: 'image', url: 'https://cdn.discordapp.com/attachments/1294284728157081685/1482331858011422760/Screenshot_53.png?ex=69b6909f&is=69b53f1f&hm=ce25c1b57c1731722ea8417c101dfc71cda328553110f2d9a557ed887b9395ec&' },
-    { type: 'video', url: '1.mp4' },
-    { type: 'video', url: '2.mp4' },
-    { type: 'video', url: '3.mp4' }
+    { type: 'video', url: 'https://pub-8e30e0ad835c4a708d4f1f073526758d.r2.dev/1.mp4' },
+    { type: 'video', url: 'https://pub-8e30e0ad835c4a708d4f1f073526758d.r2.dev/2.mp4' },
+    { type: 'video', url: 'https://pub-8e30e0ad835c4a708d4f1f073526758d.r2.dev/3.mp4' }
   ];
 
   let currentMediaLayer = 1;
