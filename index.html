@@ -1167,39 +1167,47 @@
     }
 
     @media (max-width: 768px) {
+
       .nav-item span,
       .nav-brand span {
         display: none !important;
       }
 
-      .navbar {
-        max-width: 96%;
-        height: 50px !important;
-        padding: 0 8px;
+      .navbar-container {
         top: 12px;
+        padding: 0 8px;
+      }
+
+      .navbar {
+        max-width: 100%;
+        width: 100%;
+        height: 48px !important;
+        padding: 0 4px 0 10px;
       }
 
       .nav-links {
-        gap: 2px;
+        gap: 0px;
       }
 
       .nav-item {
-        padding: 6px 8px;
-        font-size: 1rem;
+        padding: 6px 6px;
+        font-size: 0.95rem;
       }
 
       .theme-toggle {
-        width: 32px;
-        height: 32px;
-        font-size: 0.85rem;
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+        margin-left: 0;
       }
 
       #hero-clock {
-        top: 75px; 
-        right: 12px;
-        padding: 5px 12px;
-        font-size: 0.85rem;
-        border-radius: 12px;
+        top: 70px;
+        right: 8px;
+        padding: 4px 10px;
+        font-size: 0.8rem;
+        border-radius: 10px;
+        gap: 4px;
       }
 
       .footer-grid {
@@ -1242,6 +1250,27 @@
         font-size: 0.9rem;
       }
 
+      @media (max-width: 400px) {
+        .navbar {
+          padding: 0 4px;
+        }
+
+        .nav-item {
+          padding: 4px 5px;
+          font-size: 0.9rem;
+        }
+
+        .theme-toggle {
+          width: 28px;
+          height: 28px;
+        }
+
+        .nav-brand img {
+          width: 32px;
+          height: 32px;
+        }
+      }
+
       .partners-section {
         padding: 40px 0;
       }
@@ -1276,7 +1305,7 @@
         grid-template-columns: 1fr;
         padding: 20px 16px 60px;
       }
-      
+
       .feature-card {
         padding: 40px 24px;
       }
@@ -1490,7 +1519,7 @@
     <!-- FelixCraft Bedrock -->
     <div class="project-card"
       style="background: var(--glass); border-radius: 24px; overflow: hidden; border: 1px solid var(--outline); transition: 0.3s; display: flex; flex-direction: column; height: 100%;">
-      <img src="https://mikufile.felixcraft.xyz/uploads/cb124a8b4be2ce0b.png" alt="FelixCraft Bedrock"
+      <img src="https://files.catbox.moe/c7f9s3.png" alt="FelixCraft Bedrock"
         style="width: 100%; height: 200px; object-fit: cover;">
       <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
         <div style="margin-bottom: 12px;">
@@ -1520,7 +1549,7 @@
     <!-- FelixCraft Mikufile -->
     <div class="project-card"
       style="background: var(--glass); border-radius: 24px; overflow: hidden; border: 1px solid var(--outline); transition: 0.3s; display: flex; flex-direction: column; height: 100%;">
-      <img src="https://mikufile.felixcraft.xyz/uploads/bde45e1346a6d706.png" alt="FelixCraft Mikufile"
+      <img src="https://files.catbox.moe/8vvhx2.png" alt="FelixCraft Mikufile"
         style="width: 100%; height: 200px; object-fit: cover;">
       <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
         <div style="margin-bottom: 12px;">
@@ -1796,13 +1825,15 @@
     setTimeout(() => { window.location.href = dest; }, 300);
   });
 
-  // === Logo Spinner Loader (dismiss after 500ms) ===
+  // === Logo Spinner Loader ===
   const pageLoader = document.getElementById('page-loader');
   if (pageLoader) {
-    setTimeout(() => {
-      pageLoader.style.opacity = '0';
-      setTimeout(() => pageLoader.remove(), 400);
-    }, 1500);
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        pageLoader.style.opacity = '0';
+        setTimeout(() => pageLoader.remove(), 400);
+      }, 800); // Reduced delay for better feel
+    });
   }
 
   // === Theme Toggle ===
@@ -1821,39 +1852,38 @@
 
   // === Hero BG Slideshow (Randomized Image/Video with Dynamic Timing) ===
   const heroMedia = [
-    { type: 'image', url: 'https://cdn.discordapp.com/attachments/1294284728157081685/1482331857260646531/Screenshot_42.png?ex=69b6909f&is=69b53f1f&hm=5c49f897360562d69bcb0900ac12c2779113eddf9994cd25bcbdf7965d8e0294&' },
-    { type: 'image', url: 'https://cdn.discordapp.com/attachments/1294284728157081685/1482331858011422760/Screenshot_53.png?ex=69b6909f&is=69b53f1f&hm=ce25c1b57c1731722ea8417c101dfc71cda328553110f2d9a557ed887b9395ec&' },
     { type: 'video', url: 'https://pub-8e30e0ad835c4a708d4f1f073526758d.r2.dev/1.mp4' },
     { type: 'video', url: 'https://pub-8e30e0ad835c4a708d4f1f073526758d.r2.dev/2.mp4' },
-    { type: 'video', url: 'https://pub-8e30e0ad835c4a708d4f1f073526758d.r2.dev/3.mp4' }
+    { type: 'video', url: 'https://pub-8e30e0ad835c4a708d4f1f073526758d.r2.dev/3.mp4' },
+    { type: 'video', url: 'https://pub-8e30e0ad835c4a708d4f1f073526758d.r2.dev/4.mp4' },
+    { type: 'video', url: 'https://pub-8e30e0ad835c4a708d4f1f073526758d.r2.dev/5.mp4' },
+    { type: 'video', url: 'https://pub-8e30e0ad835c4a708d4f1f073526758d.r2.dev/6.mp4' },
+    { type: 'video', url: 'https://pub-8e30e0ad835c4a708d4f1f073526758d.r2.dev/7.mp4' },
+    { type: 'video', url: 'https://pub-8e30e0ad835c4a708d4f1f073526758d.r2.dev/8.mp4' }
   ];
 
   let currentMediaLayer = 1;
-  let activeMediaIndex = -1;
   let nextMediaTimeout = null;
+  let mediaQueue = [];
 
   function updateHeroBG() {
     if (nextMediaTimeout) clearTimeout(nextMediaTimeout);
 
-    let nextIndex;
-    do {
-      nextIndex = Math.floor(Math.random() * heroMedia.length);
-    } while (nextIndex === activeMediaIndex && heroMedia.length > 1);
+    // Re-shuffle if queue is empty
+    if (mediaQueue.length === 0) {
+      mediaQueue = [...Array(heroMedia.length).keys()].sort(() => Math.random() - 0.5);
+    }
 
-    activeMediaIndex = nextIndex;
+    const nextIndex = mediaQueue.pop();
     const media = heroMedia[nextIndex];
     const nextLayer = currentMediaLayer === 1 ? 2 : 1;
     const currentLayerEl = document.getElementById(`bg-layer-${currentMediaLayer}`);
     const nextLayerEl = document.getElementById(`bg-layer-${nextLayer}`);
 
-    // Preparation
     nextLayerEl.innerHTML = "";
-    if (media.type === 'image') {
-      nextLayerEl.className = 'hero-bg-image';
-      nextLayerEl.style.backgroundImage = `url('${media.url}')`;
-      // Image duration: 35 seconds
-      nextMediaTimeout = setTimeout(updateHeroBG, 35000);
-    } else {
+
+    // Create new background
+    if (media.type === 'video') {
       nextLayerEl.className = 'hero-bg-video';
       const video = document.createElement('video');
       video.src = media.url;
@@ -1861,32 +1891,27 @@
       video.autoplay = true;
       video.playsInline = true;
       video.style.opacity = '1';
-      video.onended = () => {
-        // Video finished, trigger next
-        updateHeroBG();
-      };
-      // Fallback timeout in case video fails to load or play
-      nextMediaTimeout = setTimeout(() => {
-        if (nextLayerEl.classList.contains('active')) updateHeroBG();
-      }, 60000); // 1 minute max for video if not ended
+
+      // Trigger next random video ONLY when the current one finishes
+      video.onended = () => updateHeroBG();
+
       nextLayerEl.appendChild(video);
     }
 
-    // Switch
+    // Smooth Switch
     setTimeout(() => {
       nextLayerEl.classList.add('active');
       currentLayerEl.classList.remove('active');
-      // Cleanup previous layer after fade out
       setTimeout(() => {
         if (!currentLayerEl.classList.contains('active')) {
           currentLayerEl.innerHTML = "";
         }
-      }, 2000);
+      }, 2500);
       currentMediaLayer = nextLayer;
-    }, 100);
+    }, 150);
   }
 
-  // Initial
+  // Start the first random video
   updateHeroBG();
 
   // === Scroll: Navbar shrink + Active nav ===
@@ -1908,6 +1933,32 @@
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Fix for hash navigation (coming back from portfolio)
+  function checkHashReveal() {
+    if (window.location.hash) {
+      const target = document.querySelector(window.location.hash);
+      if (target) {
+        // Activate all reveals in the target section immediately
+        target.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+        if (target.classList.contains('reveal')) target.classList.add('active');
+        // Fallback for mobile: ensure everything is visible if scroll is wonky
+        setTimeout(() => {
+          window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  }
+  window.addEventListener('load', checkHashReveal);
+  window.addEventListener('hashchange', checkHashReveal);
+
+  // Clear exit overlay on show (fix for bfcache)
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+      const ex = document.querySelector('.page-exit');
+      if (ex) ex.classList.remove('active');
+    }
+  });
 
   // === Language Switcher ===
   const langData = {
