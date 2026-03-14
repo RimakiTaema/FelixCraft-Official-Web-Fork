@@ -321,7 +321,7 @@
       width: 100%;
       height: 100%;
       opacity: 0;
-      transition: opacity 2s ease;
+      transition: opacity 1.2s ease;
       z-index: -2;
     }
 
@@ -628,41 +628,105 @@
       opacity: 0.6;
     }
 
-    /* Minimal logo spinner loader */
+    @keyframes loaderPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px var(--primary)); }
+      50% { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--primary)); }
+    }
+
     #page-loader {
       position: fixed;
       inset: 0;
       background: var(--surface);
       z-index: 99999;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.25s ease;
+      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      gap: 32px;
     }
 
-    #page-loader.hidden {
-      opacity: 0;
-      pointer-events: none;
+    .loader-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      width: 100%;
     }
 
     #page-loader img {
-      width: 150px;
-      height: 150px;
-      animation: loaderPulse 1.5s ease-in-out infinite;
+      width: 120px;
+      height: 120px;
+      filter: drop-shadow(0 0 20px var(--shadow-color));
+      animation: loaderPulse 2s ease-in-out infinite;
     }
 
-    @keyframes loaderPulse {
+    .loader-brand {
+      font-family: 'Prompt', sans-serif;
+      font-weight: 600;
+      font-size: 1.8rem;
+      color: var(--on-surface);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.9;
+      margin-top: -10px;
+    }
 
-      0%,
-      100% {
-        transform: scale(1);
-        opacity: 0.8;
-      }
+    #loader-logs-container {
+      width: 420px;
+      max-width: 85vw;
+      background: rgba(0, 0, 0, 0.04);
+      border-radius: 20px;
+      padding: 20px;
+      /* Using a high-quality mono-stack for logs */
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.75rem;
+      max-height: 180px;
+      overflow-y: auto;
+      border: 1px solid var(--outline);
+      backdrop-filter: blur(12px);
+      box-shadow: inset 0 2px 15px rgba(0,0,0,0.05);
+      scrollbar-width: none;
+    }
+    
+    [data-theme="dark"] #loader-logs-container {
+      background: rgba(255, 255, 255, 0.03);
+    }
 
-      50% {
-        transform: scale(1.15);
-        opacity: 1;
-      }
+    .log-line {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 8px;
+      line-height: 1.4;
+      animation: logIn 0.3s cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+    .log-time { color: var(--primary); font-weight: 600; opacity: 0.6; min-width: 85px; }
+    .log-msg { color: var(--on-surface); opacity: 0.8; letter-spacing: 0.2px; }
+
+    #loader-details-btn {
+      background: var(--glass);
+      border: 1px solid var(--outline);
+      padding: 8px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 0.75rem;
+      color: var(--on-surface-variant);
+      cursor: pointer;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+    #loader-details-btn:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    @keyframes logIn {
+      from { opacity: 0; transform: translateX(-8px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
     /* Page exit transition overlay */
@@ -1325,9 +1389,15 @@
 
 <div id="toast" data-i18n="toast-copy">คัดลอก IP สำหรับเข้าเล่นแล้ว!</div>
 
-<!-- Minimal loader -->
+<!-- Modern loader with logs -->
 <div id="page-loader">
-  <img src="https://iili.io/3kG3CMv.png" alt="Loading...">
+  <div class="loader-content">
+    <img src="https://iili.io/3kG3CMv.png" alt="FelixCraft Logo">
+    <div class="loader-brand">FelixCraft</div>
+    <div id="loader-logs-container">
+      <div id="loader-logs"></div>
+    </div>
+  </div>
 </div>
 
 <div class="navbar-container">
@@ -1363,8 +1433,9 @@
       <div id="bg-layer-2"></div>
     </div>
     <div class="hero-overlay"></div>
-    <div id="hero-clock" title="คลิกเพื่อซ่อน/แสดงเมนู">
-      <i class="fas fa-eye" id="ui-eye-icon" style="font-size: 1rem; opacity: 0.6; margin-right: 4px;"></i>
+    <div id="hero-clock" title="คลิกเพื่อควบคุมระดับการแสดงผล">
+      <i class="fas fa-eye" id="ui-eye-icon" style="font-size: 1rem; opacity: 0.6; margin-right: 6px;"></i>
+      <i class="fas fa-pause" id="video-pause-icon" style="font-size: 0.9rem; margin-right: 10px; color: var(--primary); opacity: 0.8; cursor: pointer; transition: 0.3s;"></i>
       <i class="fas fa-clock" style="font-size: 1.1rem; opacity: 0.8;"></i>
       <span id="clock-text">00:00:00</span>
     </div>
@@ -1825,14 +1896,77 @@
     setTimeout(() => { window.location.href = dest; }, 300);
   });
 
-  // === Logo Spinner Loader ===
+  // === Detailed Logo Loader Logic ===
   const pageLoader = document.getElementById('page-loader');
+  const loaderLogs = document.getElementById('loader-logs');
+  const detailsBtn = document.getElementById('loader-details-btn');
+  const logsContainer = document.getElementById('loader-logs-container');
+
+  function logLoadingStep(msg) {
+    if (!loaderLogs) return;
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
+    const ms = String(now.getMilliseconds()).padStart(3, '0');
+    const time = `${h}:${m}:${s}.${ms}`;
+    line.innerHTML = `<span class="log-time">[${time}]</span><span class="log-msg">${msg}</span>`;
+    loaderLogs.appendChild(line);
+    logsContainer.scrollTop = logsContainer.scrollHeight;
+  }
+
   if (pageLoader) {
+    logLoadingStep(">> Establishing Secure Link...");
+    logLoadingStep(">> Initializing System Kernel...");
+    
+    // Resource tracking
+    const resources = {
+      images: Array.from(document.images).map(img => img.src),
+      scripts: Array.from(document.scripts).map(s => s.src).filter(src => src)
+    };
+
+    logLoadingStep(`[INFO] Cache manifest found. ${resources.images.length} assets queued.`);
+    logLoadingStep(`[CORE] Verifying Typography Engine...`);
+
+    // Safety timeout
+    const safetyTimeout = setTimeout(() => {
+      logLoadingStep(">> Connection delay detected. Bypassing...");
+      pageLoader.style.opacity = '0';
+      setTimeout(() => pageLoader.remove(), 800);
+    }, 15000);
+
     window.addEventListener('load', () => {
-      setTimeout(() => {
-        pageLoader.style.opacity = '0';
-        setTimeout(() => pageLoader.remove(), 400);
-      }, 800); // Reduced delay for better feel
+      logLoadingStep(">> DOM structure synchronized.");
+      logLoadingStep(">> Requesting Discord presence data...");
+      
+      updateDiscordAvatars().then(() => {
+        logLoadingStep(">> Identity verification complete.");
+        logLoadingStep(">> Resolving High-Res visual buffers...");
+        
+        setTimeout(() => {
+          clearTimeout(safetyTimeout);
+          logLoadingStep(">> FelixCraft OS v2.0 Ready.");
+          logLoadingStep(">> Status: SUCCESS. Initializing UI...");
+          pageLoader.style.opacity = '0';
+          setTimeout(() => pageLoader.remove(), 800);
+        }, 1200);
+      });
+    });
+
+    // Detailed tracking for major images
+    document.querySelectorAll('img').forEach(img => {
+      if (img.complete) {
+        logLoadingStep(`ALREADY_CACHED: ${img.src.split('/').pop().substring(0,25)}...`);
+      } else {
+        img.addEventListener('load', () => {
+          logLoadingStep(`LOADED: ${img.src.split('/').pop().substring(0,25)}...`);
+        });
+        img.addEventListener('error', () => {
+          logLoadingStep(`FAIL_ON_LOAD: ${img.src.split('/').pop().substring(0,20)}`);
+        });
+      }
     });
   }
 
@@ -1865,6 +1999,14 @@
   let currentMediaLayer = 1;
   let nextMediaTimeout = null;
   let mediaQueue = [];
+  let currentVideoEl = null;
+  let isVideoPaused = false;
+  let pauseImageTimeout = null;
+  const pauseImages = [
+    'https://files.catbox.moe/s3yskg.png',
+    'https://files.catbox.moe/ljossf.png',
+    'https://files.catbox.moe/7mg565.png'
+  ];
 
   function updateHeroBG() {
     if (nextMediaTimeout) clearTimeout(nextMediaTimeout);
@@ -1891,24 +2033,35 @@
       video.autoplay = true;
       video.playsInline = true;
       video.style.opacity = '1';
+      currentVideoEl = video;
+      
+      // If we are currently in pause mode globally, stay paused
+      if (isVideoPaused) {
+        video.autoplay = false;
+      }
 
       // Trigger next random video ONLY when the current one finishes
-      video.onended = () => updateHeroBG();
+      video.onended = () => {
+        if (!isVideoPaused) updateHeroBG();
+      };
 
       nextLayerEl.appendChild(video);
     }
 
-    // Smooth Switch
-    setTimeout(() => {
+    // Smooth Switch using purely CSS classes for transition
+    requestAnimationFrame(() => {
       nextLayerEl.classList.add('active');
       currentLayerEl.classList.remove('active');
+      
+      // Cleanup previous layer after fade out
       setTimeout(() => {
         if (!currentLayerEl.classList.contains('active')) {
           currentLayerEl.innerHTML = "";
+          currentLayerEl.style.backgroundImage = "";
         }
-      }, 2500);
+      }, 1500);
       currentMediaLayer = nextLayer;
-    }, 150);
+    });
   }
 
   // Start the first random video
@@ -2180,13 +2333,82 @@
   // === UI Toggle (Clock Click) ===
   const heroClock = document.getElementById('hero-clock');
   const uiEyeIcon = document.getElementById('ui-eye-icon');
-  heroClock.addEventListener('click', () => {
+  const videoPauseIcon = document.getElementById('video-pause-icon');
+
+  heroClock.addEventListener('click', (e) => {
+    // Separate logic for Pause/Play button
+    if (e.target.closest('#video-pause-icon')) {
+      toggleVideoPlayback();
+      e.stopPropagation();
+      return;
+    }
+
+    // Toggle UI visibility
     const isHidden = document.body.classList.toggle('ui-hidden');
     if (uiEyeIcon) {
       uiEyeIcon.className = isHidden ? 'fas fa-eye-slash' : 'fas fa-eye';
       uiEyeIcon.style.opacity = isHidden ? '0.3' : '0.6';
     }
   });
+
+  function toggleVideoPlayback() {
+    if (isVideoPaused) {
+      // Resume action
+      clearTimeout(pauseImageTimeout);
+      isVideoPaused = false;
+      videoPauseIcon.className = 'fas fa-pause';
+      
+      const currentLayerEl = document.getElementById(`bg-layer-${currentMediaLayer}`);
+      // If we are showing an image, switch back to video immediately (but smooth)
+      if (currentLayerEl.classList.contains('hero-bg-image')) {
+        updateHeroBG();
+      } else if (currentVideoEl) {
+        currentVideoEl.play().catch(e => console.log("Play interrupted or failed", e));
+      }
+    } else {
+      // Pause action
+      if (currentVideoEl) currentVideoEl.pause();
+      isVideoPaused = true;
+      videoPauseIcon.className = 'fas fa-play';
+      
+      // Delay image switch for 3 seconds
+      clearTimeout(pauseImageTimeout);
+      pauseImageTimeout = setTimeout(() => {
+        if (isVideoPaused) showPauseImage();
+      }, 3000);
+    }
+  }
+
+  function showPauseImage() {
+    const nextLayer = currentMediaLayer === 1 ? 2 : 1;
+    const currentLayerEl = document.getElementById(`bg-layer-${currentMediaLayer}`);
+    const nextLayerEl = document.getElementById(`bg-layer-${nextLayer}`);
+    const rndImg = pauseImages[Math.floor(Math.random() * pauseImages.length)];
+    
+    // Only switch if we are still paused and not already showing an image on next layer
+    if (!isVideoPaused) return;
+
+    // Reset styles to ensure clean transition
+    nextLayerEl.innerHTML = "";
+    nextLayerEl.className = 'hero-bg-image';
+    nextLayerEl.style.backgroundImage = `url('${rndImg}')`;
+    nextLayerEl.style.opacity = ""; 
+    
+    requestAnimationFrame(() => {
+      nextLayerEl.classList.add('active');
+      currentLayerEl.classList.remove('active');
+      
+      setTimeout(() => {
+        if (!currentLayerEl.classList.contains('active')) {
+          currentLayerEl.innerHTML = "";
+          currentLayerEl.style.backgroundImage = "";
+        }
+      }, 1500);
+      
+      currentMediaLayer = nextLayer;
+      currentVideoEl = null;
+    });
+  }
 
   // === Discord Avatar Auto-update ===
   async function updateDiscordAvatars() {
