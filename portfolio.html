@@ -280,6 +280,68 @@
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
+
+    @media (max-width: 768px) {
+      .portfolio-nav {
+        padding: 10px 16px;
+      }
+
+      .back-btn {
+        padding: 6px 14px;
+        font-size: 0.9rem;
+      }
+
+      .portfolio-nav span {
+        font-size: 0.9rem;
+      }
+
+      #banner-block {
+        height: 200px !important;
+      }
+
+      #profile-block {
+        padding: 0 20px 40px !important;
+        margin-top: -50px !important;
+      }
+
+      #profile-block > div:first-child {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 16px;
+      }
+
+      #profile-avatar {
+        width: 100px !important;
+        height: 100px !important;
+      }
+
+      #profile-block h3 {
+        font-size: 1.8rem !important;
+      }
+
+      #portfolio-content {
+        padding: 24px !important;
+      }
+
+      .markdown-body {
+        font-size: 0.95rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #profile-block {
+        padding: 0 16px 40px !important;
+      }
+
+      #profile-block h3 {
+        font-size: 1.5rem !important;
+      }
+
+      #profile-block > div:first-child a {
+        width: 100%;
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 
