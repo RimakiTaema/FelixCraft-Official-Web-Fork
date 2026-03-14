@@ -367,10 +367,20 @@
     if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
 
     // Back button with transition
-    document.getElementById('back-btn').addEventListener('click', () => {
+    document.getElementById('back-btn').addEventListener('click', (e) => {
+      e.preventDefault();
       const overlay = document.getElementById('page-exit');
       overlay.classList.add('active');
-      setTimeout(() => { window.location.href = 'index.html#team'; }, 300);
+      // Use replace for cleaner history on mobile if needed, or just href
+      setTimeout(() => { 
+        window.location.href = 'index.html#team'; 
+      }, 300);
+    });
+
+    // Fix for mobile back button (bfcache)
+    window.addEventListener('pageshow', (event) => {
+      const overlay = document.getElementById('page-exit');
+      if (overlay) overlay.classList.remove('active');
     });
 
     const teamMembers = {
