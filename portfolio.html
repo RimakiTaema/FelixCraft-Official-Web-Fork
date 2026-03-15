@@ -11,6 +11,11 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <style>
+    html {
+      overflow-x: hidden;
+      width: 100%;
+    }
+
     :root {
       --primary: #0061A4;
       --on-primary: #FFFFFF;
@@ -50,6 +55,8 @@
       background-color: var(--surface);
       color: var(--on-surface);
       overflow-x: hidden;
+      width: 100%;
+      position: relative;
       line-height: 1.7;
       /* Page enter fade */
       animation: pageEnter 0.35s ease-out both;
